@@ -284,11 +284,13 @@ def _build_expenses(
 
             ws.cell(row=price_row, column=1, value=line.category)
             ws.cell(row=price_row, column=2, value=f"{line.name} - market price")
+            ws.cell(row=price_row, column=3, value=line.monthly_quantity)
             ws.cell(row=price_row, column=4, value=line.unit)
             ws.cell(row=price_row, column=5, value=f"=AVERAGE(H{price_row}:{get_column_letter(7 + len(months))}{price_row})")
             ws.cell(row=price_row, column=6, value=line.underlying)
             ws.cell(row=price_row, column=7, value=f"{series.source}; normalized to model unit price")
             _style_source(ws.cell(row=price_row, column=7))
+            _style_input(ws.cell(row=price_row, column=3))
             for month in months:
                 value = series.points[month.index].value
                 ws.cell(row=price_row, column=8 + month.index, value=value)
@@ -298,9 +300,11 @@ def _build_expenses(
             ws.cell(row=cost_row, column=2, value=f"Cost ({line.name})")
             ws.cell(row=cost_row, column=3, value=line.monthly_quantity)
             ws.cell(row=cost_row, column=4, value=line.unit)
+            ws.cell(row=cost_row, column=5, value=f"=E{price_row}")
             ws.cell(row=cost_row, column=6, value=line.underlying)
             ws.cell(row=cost_row, column=7, value="Cost = quantity x seasonality x monthly market price")
             _style_input(ws.cell(row=cost_row, column=3))
+            _style_formula(ws.cell(row=cost_row, column=5))
             for month in months:
                 col = get_column_letter(8 + month.index)
                 if line.seasonality_linked:
