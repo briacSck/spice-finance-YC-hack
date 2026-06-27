@@ -19,7 +19,7 @@ cp .env.example .env
 ```
 Edit `.env`:
 - `MORPHO_CHAIN_ID` — `8453` Base (default), `1` Ethereum, `84532` Base Sepolia, `11155111` Sepolia
-- `MORPHO_VAULT` — ERC-4626 vault (default = Steakhouse USDC on Base)
+- `MORPHO_VAULT` — ERC-4626 vault (default = `0xbeef0e0834849aCC03f0089F01f4F1Eeb06873C9`, Steakhouse USDC on Base mainnet)
 - `WALLET_PRIVATE_KEY` — signs deposit/withdraw; **needs USDC + a little native gas**.
   Leave empty to run `info` read-only.
 
@@ -38,7 +38,8 @@ Each write returns `{tx_hash, explorer, status, block}`.
 ## Known mainnet Base USDC vaults (ERC-4626)
 | Vault | Address |
 |---|---|
-| Steakhouse USDC | `0xbeeF010f9cb27031ad51e3333f9aF9C6B1228183` |
+| Steakhouse USDC (default) | `0xbeef0e0834849aCC03f0089F01f4F1Eeb06873C9` |
+| Steakhouse USDC (alt) | `0xbeeF010f9cb27031ad51e3333f9aF9C6B1228183` |
 | Seamless USDC | `0x616a4E1db48e22028f6bbf20444Cd3b8e3273738` |
 | Spark USDC | `0x7BfA7C4f149E7415b73bdeDfe609237e29CBF34A` |
 

@@ -37,7 +37,7 @@ CHAINS: dict[int, Chain] = {
 class Settings:
     chain_id: int = int(os.getenv("MORPHO_CHAIN_ID", "8453"))
     rpc_url: str = os.getenv("MORPHO_RPC_URL", "")
-    vault: str = os.getenv("MORPHO_VAULT", "0xbeeF010f9cb27031ad51e3333f9aF9C6B1228183")
+    vault: str = os.getenv("MORPHO_VAULT", "0xbeef0e0834849aCC03f0089F01f4F1Eeb06873C9")
     usdc_override: str = os.getenv("MORPHO_USDC", "")
     graphql: str = os.getenv("MORPHO_GRAPHQL", "https://api.morpho.org/graphql")
     private_key: str = os.getenv("WALLET_PRIVATE_KEY", "")

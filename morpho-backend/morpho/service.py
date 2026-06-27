@@ -65,6 +65,8 @@ class MorphoService:
         steps: dict[str, Any] = {"amount_usdc": amount_usdc, "vault": c.vault_address}
         if c.allowance(owner) < raw:
             steps["approve"] = c.approve(raw)
+            if c.wait_allowance(owner, raw) < raw:  # tolerate RPC lag before deposit
+                raise RuntimeError("approve did not take effect (allowance still short)")
         steps["deposit"] = c.deposit(raw)
         steps["position_after"] = self.info(owner).get("position")
         return steps

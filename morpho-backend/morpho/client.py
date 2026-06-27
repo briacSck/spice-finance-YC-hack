@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import time
 from typing import Any
 
 from web3 import Web3
@@ -66,8 +67,20 @@ class MorphoClient:
         tx_hash = self.w3.eth.send_raw_transaction(raw)
         receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
         h = tx_hash.hex()
+        if int(receipt["status"]) != 1:
+            raise RuntimeError(f"tx reverted: {self.explorer_tx(h)}")
         return {"tx_hash": h, "explorer": self.explorer_tx(h),
                 "status": int(receipt["status"]), "block": receipt["blockNumber"]}
+
+    def wait_allowance(self, owner: str, min_raw: int, tries: int = 12,
+                       delay: float = 2.0) -> int:
+        """Poll until allowance >= min_raw (tolerates load-balanced RPC lag)."""
+        for _ in range(tries):
+            a = self.allowance(owner)
+            if a >= min_raw:
+                return a
+            time.sleep(delay)
+        return self.allowance(owner)
 
     # --- reads --------------------------------------------------------------
     def shares_balance(self, owner: str) -> int:

@@ -43,6 +43,7 @@ class FakeClient:
     def max_withdraw(self, owner): return self._max_w
     def usdc_balance(self, owner): return self._usdc
     def allowance(self, owner): return self._allow
+    def wait_allowance(self, owner, min_raw, **kw): return max(self._allow, min_raw)
     def total_assets(self): return self._total
 
     def approve(self, raw): self.calls.append(f"approve:{raw}"); return {"tx_hash": "0xa"}
