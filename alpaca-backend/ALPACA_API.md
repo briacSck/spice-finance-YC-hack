@@ -17,6 +17,8 @@
 | ZC | Corn / feed | **CORN** (Teucrium Corn) | ✅ | thin |
 | ZL | Soy oil / fats | **SOYB** (Teucrium Soy); `DBA` broad ag | ◐ | thin |
 | HG | Copper / wiring / BTP | **CPER** (US Copper); `COPX` miners | ◐ | thin (CPER), better COPX |
+| — | Aluminium / zinc / base metals | **DBB** (Invesco DB Base Metals) | ◐ | thin |
+| — | Steel / rebar / structural metalwork | **SLX** (VanEck Steel, equity proxy) | ✅ | ok (equity ETF) |
 | — | Broad basket | `DBC` (commodities), `DBA` (ag), `GLD`/`SLV` metals | ✅ | good |
 
 **Honest note:** single-commodity ETF options (WEAT/CORN/CPER) are illiquid. For a smooth

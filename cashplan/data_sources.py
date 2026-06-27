@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import date
-import io
 import json
 import math
 from pathlib import Path
@@ -21,6 +20,15 @@ WORLD_BANK_PINK_SHEET_URL = (
 )
 
 ALPHA_VANTAGE_URL = "https://www.alphavantage.co/query"
+ALPHA_VANTAGE_SUPPORTED = {
+    "WTI",
+    "BRENT",
+    "NATURAL_GAS",
+    "COPPER",
+    "ALUMINUM",
+    "WHEAT",
+    "SUGAR",
+}
 
 DEFAULT_BASE_PRICES = {
     "WTI": 78.0,
@@ -28,6 +36,12 @@ DEFAULT_BASE_PRICES = {
     "NATURAL_GAS": 3.2,
     "COPPER": 8_200.0,
     "ALUMINUM": 2_500.0,
+    "IRON_ORE": 115.0,
+    "STEEL_REBAR": 650.0,
+    "LEAD": 2_100.0,
+    "NICKEL": 18_000.0,
+    "TIN": 28_000.0,
+    "ZINC": 2_800.0,
     "WHEAT": 275.0,
     "SUGAR": 0.47,
     "COCOA": 7_000.0,
@@ -41,6 +55,12 @@ DEFAULT_VOLATILITY = {
     "NATURAL_GAS": 0.12,
     "COPPER": 0.08,
     "ALUMINUM": 0.06,
+    "IRON_ORE": 0.10,
+    "STEEL_REBAR": 0.07,
+    "LEAD": 0.07,
+    "NICKEL": 0.11,
+    "TIN": 0.10,
+    "ZINC": 0.08,
     "WHEAT": 0.08,
     "SUGAR": 0.07,
     "COCOA": 0.14,
@@ -54,6 +74,12 @@ WORLD_BANK_LABEL_HINTS = {
     "NATURAL_GAS": ["natural gas, us", "natural gas, europe"],
     "COPPER": ["copper"],
     "ALUMINUM": ["aluminum", "aluminium"],
+    "IRON_ORE": ["iron ore"],
+    "STEEL_REBAR": ["steel rebar", "steel"],
+    "LEAD": ["lead"],
+    "NICKEL": ["nickel"],
+    "TIN": ["tin"],
+    "ZINC": ["zinc"],
     "WHEAT": ["wheat, us hrw", "wheat"],
     "SUGAR": ["sugar, world", "sugar"],
     "COCOA": ["cocoa"],
@@ -101,7 +127,7 @@ class CommodityDataProvider:
 
     def get_series(self, code: str, months: list[str], unit_price_hint: float | None = None) -> PriceSeries:
         normalized_code = code.upper()
-        if self.online and self.alpha_vantage_key:
+        if self.online and self.alpha_vantage_key and normalized_code in ALPHA_VANTAGE_SUPPORTED:
             series = self._fetch_alpha_vantage(normalized_code)
             if series and series.points:
                 return _trim_or_extend(series, months, unit_price_hint or DEFAULT_BASE_PRICES.get(normalized_code, 1.0))

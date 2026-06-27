@@ -25,7 +25,9 @@ Spice maps each business's cost structure down to the **tradeable commodities un
 | Commodity (hedgeable) | Hidden inside these SMB inputs |
 |---|---|
 | **Oil** | plastics/polymers (PVC, polystyrene, polyurethane), bitumen, synthetic rubber, transport & logistics, off-road diesel (GNR) for machinery |
-| **Electricity** | aluminium ("solidified electricity"), glass, partly electric steel |
+| **Electricity** | glass, electric-arc furnace share of steel melting |
+| **Aluminium / zinc (DBB)** | aluminium profiles, galvanised/zinc-coated fittings, base-metal hardware |
+| **Steel (SLX)** | structural steel, rebar, sheet/bar stock, metalwork fabrication |
 | **Gas** | cement, glass, nitrogen fertilizers (ammonia from gas), part of chemicals |
 | **Wheat** | flour, bread, animal feed (→ part of meat) |
 | **Fats** | butter, cream |

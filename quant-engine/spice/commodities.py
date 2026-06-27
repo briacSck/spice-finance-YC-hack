@@ -28,6 +28,8 @@ COMMODITIES: dict[str, Commodity] = {
     "CPER": Commodity("CPER", "Cuivre", 0.30),
     "XLU": Commodity("XLU", "Électricité", 0.20),
     "WOOD": Commodity("WOOD", "Bois", 0.25),
+    "DBB": Commodity("DBB", "Métaux industriels (alu/zinc)", 0.22),
+    "SLX": Commodity("SLX", "Acier", 0.32),
 }
 
 

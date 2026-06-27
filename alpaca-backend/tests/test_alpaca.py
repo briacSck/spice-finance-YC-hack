@@ -17,7 +17,7 @@ from alpaca.service import AlpacaHedgeService, _pick_contract
 
 # --- registry / infer / occ --------------------------------------------------
 def test_registry_has_user_tickers():
-    assert set(ETFS) == {"USO", "UNG", "WEAT", "CORN", "SOYB", "CPER", "XLU", "WOOD"}
+    assert set(ETFS) == {"USO", "UNG", "WEAT", "CORN", "SOYB", "CPER", "XLU", "WOOD", "DBB", "SLX"}
 
 
 def test_get_etf_unknown_raises():
@@ -28,7 +28,8 @@ def test_get_etf_unknown_raises():
 def test_infer_maps_commodities_to_etfs():
     hits = infer_exposures(
         ["Farine T65", "Diesel camion", "Gaz four", "Cuivre câble",
-         "Facture électricité", "Palette bois"]
+         "Facture électricité", "Palette bois", "Profilés aluminium",
+         "Plaques de zinc", "Poutre acier"]
     )
     assert hits["WEAT"] == ["Farine T65"]
     assert hits["USO"] == ["Diesel camion"]
@@ -36,6 +37,8 @@ def test_infer_maps_commodities_to_etfs():
     assert hits["CPER"] == ["Cuivre câble"]
     assert hits["XLU"] == ["Facture électricité"]
     assert hits["WOOD"] == ["Palette bois"]
+    assert hits["DBB"] == ["Profilés aluminium", "Plaques de zinc"]
+    assert hits["SLX"] == ["Poutre acier"]
 
 
 def test_infer_no_substring_false_positive():

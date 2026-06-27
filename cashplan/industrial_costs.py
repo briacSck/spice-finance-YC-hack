@@ -4,6 +4,8 @@ from dataclasses import dataclass
 import random
 import re
 
+from cashplan.materials import material, material_source_notes
+
 
 @dataclass(frozen=True)
 class IndustrialCostItem:
@@ -17,6 +19,7 @@ class IndustrialCostItem:
     market_code: str | None = None
     volatility: float = 0.03
     seasonality_linked: bool = True
+    material_key: str | None = None
 
 
 @dataclass(frozen=True)
@@ -32,6 +35,7 @@ class IndustrialCostDriver:
     volatility: float = 0.03
     seasonality_linked: bool = True
     min_monthly_quantity: float = 1.0
+    material_key: str | None = None
 
 
 @dataclass(frozen=True)
@@ -42,16 +46,44 @@ class IndustrialCostPreset:
     drivers: tuple[IndustrialCostDriver, ...]
 
 
+def material_driver(
+    category: str,
+    material_key: str,
+    annual_revenue_share: float,
+    name: str | None = None,
+    unit: str | None = None,
+    unit_price: float | None = None,
+    source: str | None = None,
+    seasonality_linked: bool = True,
+) -> IndustrialCostDriver:
+    mat = material(material_key)
+    return IndustrialCostDriver(
+        category=category,
+        name=name or mat.label,
+        annual_revenue_share=annual_revenue_share,
+        unit=unit or mat.default_unit,
+        unit_price=unit_price if unit_price is not None else mat.default_unit_price,
+        source=source or mat.source,
+        underlying=mat.underlying,
+        market_code=mat.market_code,
+        volatility=mat.volatility,
+        seasonality_linked=seasonality_linked,
+        material_key=material_key,
+    )
+
+
 INDUSTRIAL_PRESETS: dict[str, IndustrialCostPreset] = {
     "plastics_injection": IndustrialCostPreset(
         key="plastics_injection",
         label="Plastics injection / polymer workshop",
         description="Industrial SME turning oil-linked polymers into plastic parts.",
         drivers=(
-            IndustrialCostDriver("Raw materials", "PVC / polymer resin", 0.279, "kg", 1.55, "Oil-linked polymer benchmark", "Oil", "WTI", 0.09),
-            IndustrialCostDriver("Raw materials", "Polyurethane additives", 0.067, "kg", 2.80, "Chemical input benchmark", "Oil", None, 0.06),
-            IndustrialCostDriver("Energy", "Electricity for injection molding", 0.067, "kWh", 0.16, "Industrial electricity tariff proxy", "Electricity", None, 0.05),
-            IndustrialCostDriver("Raw materials", "Cardboard and wood pallets", 0.068, "unit", 7.50, "Packaging and pallet benchmark", "Wood", None, 0.04),
+            material_driver("Raw materials", "polymer_resin", 0.245, "PVC / polymer resin granulate"),
+            material_driver("Raw materials", "polyurethane", 0.055, "Polyurethane additives and oil-linked chemicals"),
+            material_driver("Raw materials", "carbon_steel", 0.028, "Steel mold inserts and tooling wear parts"),
+            material_driver("Raw materials", "aluminium", 0.018, "Aluminium fixtures and light tooling"),
+            material_driver("Energy", "industrial_electricity", 0.067, "Electricity for injection molding"),
+            material_driver("Raw materials", "cardboard_packaging", 0.060, "Cardboard packaging and wood pallets"),
             IndustrialCostDriver("Personnel", "Production payroll and charges", 0.335, "monthly package", 1.0, "Industrial SMB payroll ratio", None, None, 0.00, False),
             IndustrialCostDriver("Fixed costs", "Workshop rent", 0.082, "monthly package", 1.0, "Industrial lease ratio", None, None, 0.00, False),
             IndustrialCostDriver("Fixed costs", "Machine leases and maintenance", 0.098, "monthly package", 1.0, "Equipment lease and maintenance ratio", None, None, 0.00, False),
@@ -61,12 +93,17 @@ INDUSTRIAL_PRESETS: dict[str, IndustrialCostPreset] = {
     "metalwork": IndustrialCostPreset(
         key="metalwork",
         label="Metalworking / electrical components workshop",
-        description="Industrial SME using copper, aluminium, electricity and workshop labor.",
+        description="Industrial SME using steel, stainless/nickel, zinc, copper, aluminium and workshop labor.",
         drivers=(
-            IndustrialCostDriver("Raw materials", "Copper wiring and bars", 0.234, "kg", 8.20, "Copper market proxy", "Copper", "COPPER", 0.08),
-            IndustrialCostDriver("Raw materials", "Aluminium profiles", 0.088, "kg", 2.60, "Aluminium market proxy", "Electricity", "ALUMINUM", 0.06),
-            IndustrialCostDriver("Energy", "Electricity for machines", 0.046, "kWh", 0.16, "Industrial electricity tariff proxy", "Electricity", None, 0.05),
-            IndustrialCostDriver("Fuel and mobility", "Transport and delivery fuel", 0.030, "L", 1.62, "Oil-linked fuel proxy", "Oil", "WTI", 0.08),
+            material_driver("Raw materials", "carbon_steel", 0.115, "Carbon steel sheet, tubes and profiles"),
+            material_driver("Raw materials", "galvanized_steel", 0.045, "Galvanized steel sheet"),
+            material_driver("Raw materials", "stainless_steel", 0.055, "Stainless steel parts and sheet"),
+            material_driver("Raw materials", "aluminium", 0.055, "Aluminium profiles and plates"),
+            material_driver("Raw materials", "copper", 0.080, "Copper wiring, bars and busbars"),
+            material_driver("Raw materials", "zinc", 0.020, "Zinc coating, plated fasteners and die-cast hardware"),
+            material_driver("Raw materials", "tin", 0.010, "Tin solder and tinplate consumables"),
+            material_driver("Energy", "industrial_electricity", 0.046, "Electricity for CNC and machine tools"),
+            material_driver("Fuel and mobility", "diesel", 0.030, "Transport and delivery fuel"),
             IndustrialCostDriver("Personnel", "Workshop payroll and charges", 0.335, "monthly package", 1.0, "Industrial SMB payroll ratio", None, None, 0.00, False),
             IndustrialCostDriver("Fixed costs", "Workshop rent", 0.080, "monthly package", 1.0, "Industrial lease ratio", None, None, 0.00, False),
             IndustrialCostDriver("Fixed costs", "Machine maintenance and consumables", 0.065, "monthly package", 1.0, "Maintenance benchmark", None, None, 0.00, False),
@@ -78,11 +115,13 @@ INDUSTRIAL_PRESETS: dict[str, IndustrialCostPreset] = {
         label="Woodworking / furniture workshop",
         description="Industrial SME making wood products, furniture, packaging or carpentry.",
         drivers=(
-            IndustrialCostDriver("Raw materials", "Timber and panels", 0.260, "m3", 420.0, "Wood and panel benchmark", "Wood", None, 0.05),
-            IndustrialCostDriver("Raw materials", "Glue, varnish and oil-linked chemicals", 0.040, "kg", 5.40, "Chemical input benchmark", "Oil", None, 0.05),
-            IndustrialCostDriver("Raw materials", "Hardware, hinges and metal fittings", 0.055, "unit basket", 100.0, "Hardware benchmark", "Copper", "COPPER", 0.05),
-            IndustrialCostDriver("Energy", "Electricity for CNC, saws and dust extraction", 0.045, "kWh", 0.16, "Industrial electricity tariff proxy", "Electricity", None, 0.05),
-            IndustrialCostDriver("Fuel and mobility", "Delivery fuel", 0.025, "L", 1.62, "Oil-linked fuel proxy", "Oil", "WTI", 0.08),
+            material_driver("Raw materials", "wood_panels", 0.240, "Timber, boards and panels"),
+            material_driver("Raw materials", "polyurethane", 0.035, "Glue, varnish and oil-linked finishing chemicals", unit_price=5.40),
+            material_driver("Raw materials", "carbon_steel", 0.020, "Steel screws, brackets and structural hardware"),
+            material_driver("Raw materials", "zinc", 0.012, "Zinc-plated hinges, fasteners and handles"),
+            material_driver("Raw materials", "aluminium", 0.012, "Aluminium rails and light fittings"),
+            material_driver("Energy", "industrial_electricity", 0.045, "Electricity for CNC, saws and dust extraction"),
+            material_driver("Fuel and mobility", "diesel", 0.025, "Delivery fuel"),
             IndustrialCostDriver("Personnel", "Workshop payroll and charges", 0.310, "monthly package", 1.0, "Industrial SMB payroll ratio", None, None, 0.00, False),
             IndustrialCostDriver("Fixed costs", "Workshop rent", 0.075, "monthly package", 1.0, "Industrial lease ratio", None, None, 0.00, False),
             IndustrialCostDriver("Fixed costs", "Machine maintenance, blades and tooling", 0.050, "monthly package", 1.0, "Maintenance benchmark", None, None, 0.00, False),
@@ -92,13 +131,19 @@ INDUSTRIAL_PRESETS: dict[str, IndustrialCostPreset] = {
     "light_manufacturing": IndustrialCostPreset(
         key="light_manufacturing",
         label="Light manufacturing",
-        description="Generic industrial SME with purchased goods, machine power, labor and overhead.",
+        description="Generic industrial SME with precise metal, polymer, energy and logistics exposures.",
         drivers=(
-            IndustrialCostDriver("Raw materials", "Purchased components and inputs", 0.240, "unit basket", 100.0, "Generic manufacturing input ratio", None, None, 0.04),
-            IndustrialCostDriver("Raw materials", "Packaging and pallets", 0.045, "unit", 7.50, "Packaging benchmark", "Wood", None, 0.04),
-            IndustrialCostDriver("Energy", "Industrial electricity", 0.060, "kWh", 0.16, "Industrial electricity tariff proxy", "Electricity", None, 0.05),
-            IndustrialCostDriver("Energy", "Process gas or heating", 0.020, "kWh", 0.10, "Gas tariff proxy", "Gas", "NATURAL_GAS", 0.08),
-            IndustrialCostDriver("Fuel and mobility", "Logistics and delivery fuel", 0.035, "L", 1.62, "Oil-linked logistics proxy", "Oil", "WTI", 0.08),
+            material_driver("Raw materials", "carbon_steel", 0.070, "Carbon steel bought-in parts"),
+            material_driver("Raw materials", "galvanized_steel", 0.025, "Galvanized sheet and zinc-coated components"),
+            material_driver("Raw materials", "aluminium", 0.035, "Aluminium parts and profiles"),
+            material_driver("Raw materials", "copper", 0.030, "Copper wiring and connectors"),
+            material_driver("Raw materials", "zinc", 0.014, "Zinc-plated hardware"),
+            material_driver("Raw materials", "tin", 0.006, "Tin solder or tinplate inputs"),
+            material_driver("Raw materials", "polymer_resin", 0.040, "Plastic housings and polymer components"),
+            material_driver("Raw materials", "cardboard_packaging", 0.035, "Packaging and pallets"),
+            material_driver("Energy", "industrial_electricity", 0.060, "Industrial electricity"),
+            material_driver("Energy", "process_gas", 0.020, "Process gas or heating"),
+            material_driver("Fuel and mobility", "diesel", 0.035, "Logistics and delivery fuel"),
             IndustrialCostDriver("Personnel", "Production payroll and charges", 0.300, "monthly package", 1.0, "Industrial SMB payroll ratio", None, None, 0.00, False),
             IndustrialCostDriver("Fixed costs", "Workshop rent and facilities", 0.075, "monthly package", 1.0, "Industrial lease ratio", None, None, 0.00, False),
             IndustrialCostDriver("Fixed costs", "Machine leases, maintenance and tooling", 0.085, "monthly package", 1.0, "Equipment cost ratio", None, None, 0.00, False),
@@ -112,7 +157,7 @@ def infer_industrial_preset_key(business_description: str) -> str | None:
     text = _normalize(business_description)
     if re.search(r"plast|polymer|pvc|injection|polyurethane", text):
         return "plastics_injection"
-    if re.search(r"metal|usinage|fonderie|foundry|aluminium|aluminum|copper|cuivre|electricien|electrical|cable", text):
+    if re.search(r"metal|usinage|fonderie|foundry|aluminium|aluminum|copper|cuivre|electricien|electrical|cable|hardware|zinc|acier|steel|inox|stainless|galvani|chaudronnerie", text):
         return "metalwork"
     if re.search(r"wood|bois|menuis|furniture|mobilier|palette|timber", text):
         return "woodworking"
@@ -153,6 +198,7 @@ def build_industrial_cost_items(
                 market_code=driver.market_code,
                 volatility=driver.volatility,
                 seasonality_linked=driver.seasonality_linked,
+                material_key=driver.material_key,
             )
         )
 
@@ -174,9 +220,8 @@ def industrial_benchmark_notes(preset_key: str) -> list[tuple[str, str, str, str
             "local generator",
             "Each cost line starts from an annual revenue share, unit price and realistic monthly quantity.",
         ),
-    ]
+    ] + material_source_notes()
 
 
 def _normalize(value: str) -> str:
     return re.sub(r"\s+", " ", value.lower()).strip()
-

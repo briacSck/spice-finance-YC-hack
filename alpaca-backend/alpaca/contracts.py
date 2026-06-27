@@ -71,7 +71,7 @@ ETFS: dict[str, ETF] = {
         (
             "electricity", "électricité", "electricite", "power", "courant",
             "kwh", "kw/h", "energie electrique", "énergie électrique",
-            "aluminium", "aluminum", "alu", "verre electrique",
+            "verre electrique",
         ),
     ),
     "WOOD": ETF(
@@ -80,6 +80,22 @@ ETFS: dict[str, ETF] = {
             "wood", "bois", "lumber", "timber", "charpente", "menuiserie",
             "palette", "emballage bois", "panneau", "contreplaqué", "osb",
             "papier", "carton", "pâte à papier",
+        ),
+    ),
+    "DBB": ETF(
+        "DBB", "Métaux industriels", "Invesco DB Base Metals Fund (aluminium/zinc/copper basket)",
+        (
+            "aluminium", "aluminum", "alu", "zinc", "zingage", "galvanisation",
+            "galvanisé", "galvanized", "metaux industriels", "métaux industriels",
+            "non-ferreux", "nonferrous", "base metal",
+        ),
+    ),
+    "SLX": ETF(
+        "SLX", "Acier", "VanEck Steel ETF (steel producers, equity proxy)",
+        (
+            "steel", "acier", "rebar", "fer a beton", "fer à béton", "ferraille",
+            "scrap steel", "structural steel", "charpente metallique",
+            "charpente métallique", "tole", "tôle", "tolerie", "tôlerie",
         ),
     ),
 }

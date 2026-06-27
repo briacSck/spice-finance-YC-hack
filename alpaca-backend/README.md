@@ -106,6 +106,8 @@ ETF registry (commodity → Alpaca options ticker):
 | Cuivre | CPER |
 | Électricité | XLU |
 | Bois | WOOD |
+| Métaux industriels (alu/zinc) | DBB |
+| Acier | SLX |
 
 Endpoints: `/account` `/instruments` `/infer` `/chain/{ticker}` `/positions`
 `/hedge/option` (single-leg) `/hedge/collar` (L3 multi-leg) `/orders`.

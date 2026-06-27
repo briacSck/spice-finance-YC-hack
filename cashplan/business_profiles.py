@@ -11,6 +11,7 @@ from cashplan.industrial_costs import (
     industrial_benchmark_notes,
     infer_industrial_preset_key,
 )
+from cashplan.materials import material as material_lookup
 
 
 @dataclass(frozen=True)
@@ -76,6 +77,12 @@ UNDERLYING_LABELS = {
     "fats": "Fats",
     "copper": "Copper",
     "wood": "Wood",
+    "aluminium": "Aluminium",
+    "lead": "Lead",
+    "nickel": "Nickel",
+    "tin": "Tin",
+    "zinc": "Zinc",
+    "steel": "Steel",
 }
 
 
@@ -130,7 +137,7 @@ def infer_business_profile(
         return _scale_profile(_construction_profile(), annual_revenue)
     if any(word in text for word in ["restaurant", "traiteur", "cafe", "brasserie"]):
         return _scale_profile(_restaurant_profile(), annual_revenue)
-    if any(word in text for word in ["metal", "usinage", "foundry", "fonderie", "electricien"]):
+    if any(word in text for word in ["metal", "usinage", "foundry", "fonderie", "electricien", "zinc", "acier", "steel", "galvani", "chaudronnerie"]):
         return _scale_profile(_metalwork_profile(), annual_revenue)
     industrial_preset_key = infer_industrial_preset_key(text)
     if industrial_preset_key:
@@ -272,6 +279,10 @@ def _plastics_profile() -> BusinessProfile:
 
 
 def _construction_profile() -> BusinessProfile:
+    steel = material_lookup("carbon_steel")
+    timber = material_lookup("wood_panels")
+    copper = material_lookup("copper")
+    diesel = material_lookup("diesel")
     return BusinessProfile(
         business_type="construction",
         archetype="construction",
@@ -292,10 +303,10 @@ def _construction_profile() -> BusinessProfile:
         ],
         cost_lines=[
             CostLine("Raw materials", "Cement and concrete inputs", 95, "t", 115, "Cement benchmark estimate", "Gas", None, 0.05),
-            CostLine("Raw materials", "Timber and panels", 38, "m3", 420, "Wood benchmark estimate", "Wood", None, 0.05),
-            CostLine("Raw materials", "Steel and metalwork", 18, "t", 880, "Steel electricity-linked estimate", "Electricity", None, 0.06),
-            CostLine("Fuel and mobility", "Diesel for machinery and vehicles", 4200, "L", 1.62, "Fuel market proxy: oil", "Oil", "WTI", 0.08),
-            CostLine("Raw materials", "Copper electrical wiring", 480, "kg", 8.10, "Copper market proxy", "Copper", "COPPER", 0.08),
+            CostLine("Raw materials", "Timber and panels", 38, timber.default_unit, timber.default_unit_price, timber.source, timber.underlying, timber.market_code, timber.volatility),
+            CostLine("Raw materials", "Carbon steel rebar, sheet and metalwork", 18000, steel.default_unit, steel.default_unit_price, steel.source, steel.underlying, steel.market_code, steel.volatility),
+            CostLine("Fuel and mobility", "Diesel for machinery and vehicles", 4200, diesel.default_unit, diesel.default_unit_price, diesel.source, diesel.underlying, diesel.market_code, diesel.volatility),
+            CostLine("Raw materials", "Copper electrical wiring", 480, copper.default_unit, copper.default_unit_price, copper.source, copper.underlying, copper.market_code, copper.volatility),
             CostLine("Personnel", "Site payroll and charges", 1, "monthly package", 27500, "Construction payroll estimate", None, None, 0.00, False),
             CostLine("Fixed costs", "Tools, equipment rental, depot", 1, "monthly package", 12500, "Contractor overhead estimate", None, None, 0.00, False),
             CostLine("Fixed costs", "Insurance, admin, accounting", 1, "monthly package", 5200, "SMB overhead estimate", None, None, 0.00, False),
@@ -449,6 +460,12 @@ def _generic_profile(business_type: str, annual_revenue: float, rng: random.Rand
         add_cost_from_revenue_share("Raw materials", "Wood and timber", 0.09, "m3", 420, "Wood proxy", "Wood", None, 0.05)
     if any(word in text for word in ["cable", "electric", "metal", "hardware"]):
         add_cost_from_revenue_share("Raw materials", "Copper inputs", 0.07, "kg", 8.20, "Copper proxy", "Copper", "COPPER", 0.08)
+    if any(word in text for word in ["alu", "aluminium", "aluminum"]):
+        add_cost_from_revenue_share("Raw materials", "Aluminium inputs", 0.05, "kg", 2.60, "Aluminium proxy", "Aluminium", "ALUMINUM", 0.06)
+    if any(word in text for word in ["zinc", "galvani"]):
+        add_cost_from_revenue_share("Raw materials", "Zinc inputs", 0.03, "kg", 4.50, "Zinc proxy", "Zinc", "ZINC", 0.09)
+    if any(word in text for word in ["acier", "steel", "chaudronnerie"]):
+        add_cost_from_revenue_share("Raw materials", "Steel inputs", 0.06, "kg", 1.20, "Steel rebar proxy", "Steel", "STEEL_REBAR", 0.07)
     if any(word in text for word in ["construction", "building", "cement", "btp"]):
         add_cost_from_revenue_share("Raw materials", "Cement and mineral inputs", 0.08, "t", 115, "Gas-linked cement proxy", "Gas", None, 0.05)
 
