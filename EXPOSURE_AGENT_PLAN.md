@@ -7,7 +7,7 @@ revenues and expenses over several years, identify which commodity underlyings
 the company should consider hedging.
 
 The agent does not execute hedges yet. Its job is to turn ordinary accounting
-data into an explainable commodity exposure map and a hedge priority list.
+data into an explainable commodity exposure map and a hedge priority list. It will give justified recommandation to the owner of the business, and the latter will give it his opinion of the hedges proposed. The agent will then be able to refine and adapt its analysis in order to fit better the owner's needs.
 
 ## Product Principle
 
@@ -32,6 +32,8 @@ The first version maps expenses only to these commodity underlyings:
 | Fats | Butter, cream, fats, dairy fats |
 | Copper | Copper, wiring, electrical components, copper piping |
 | Wood | Wood, pallets, wood packaging, timber, carpentry, construction wood |
+
+For instance for a bakery, flour is a business input whose cost depends on the underlying wheat.
 
 Out of scope for v1:
 
@@ -135,8 +137,14 @@ For each underlying, compute:
 - top contributing categories/vendors/descriptions
 - mapping confidence
 
-The key first-order metric is cost share. The key business metric is margin
+The key business metric is margin
 sensitivity.
+
+
+for each underlying, compute:
+- the total spent on costs related to this product
+- its share of total revenue
+- for each business input mapped to this underlying, the ratio: standard_deviation(unit price of the business input )
 
 ### 5. Stress Test Margin
 
