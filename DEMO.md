@@ -51,6 +51,47 @@
 
 ---
 
+## Design decisions (locked 2026-06-27, plan-design-review)
+
+Full system in `DESIGN.md`. Aesthetic: **premium fintech, épuré** — calm, money-grade,
+not a generic SaaS dashboard. The quant is the proof; the design is the believability layer.
+
+- **DR1 — Direction:** light, refined, one deep-green accent, terracotta for risk only.
+  Borderless cards on warm paper, quiet status dots (no filled pills), generous air.
+  Type: **Satoshi** + **Spline Sans Mono** (tabular numerics). Picked over a dark
+  trading-desk variant and an editorial-brand variant.
+- **DR2 — Projection:** keep the light UI; tune contrast + min type (≥12.5px) for the
+  room; verify on the real projector at rehearsal (H42–48). Warm off-white (`#F4F3EF`),
+  not pure white, to cut glare.
+- **DR3 — Language:** fully English chrome ("Recommendations", "Bakery", "Run risk
+  analysis"); keep the proper noun *Maison Levain*.
+- **DR4 — Motion:** choreographed but safe — count-up numbers, feed types in event-by-event
+  over SSE, margin-collapse transition, climax banner slides in. Timing from the scenario
+  clock (deterministic, D1) → repeatable across ≥5 runs; recorded fallback if a venue hangs.
+- **Two hero visuals carry the demo:** the **margin collapse** on Analyse (11.0% → 3.3%,
+  terracotta) and the **deep-ink payout banner** on Execution (VaR 13.1% → 2.0%, margin
+  held 11% vs peer 3.3%, +€107.5k). Everything else stays calm so these land.
+- **Interaction states** (loading / empty / settled / error+fallback) are specified per
+  surface in `DESIGN.md` — the demo *is* the live SSE stream, so states are load-bearing.
+
+### Approved mockups
+Built as real HTML (Satoshi + Spline Sans Mono), convertible straight to Next.js + Tailwind.
+
+| Screen | Mockup |
+|--------|--------|
+| Dashboard | `~/.gstack/projects/briacSck-spice-finance-YC-hack/designs/dashboard-variants-20260627/variant-B2.png` |
+| Analyse | `~/.gstack/projects/briacSck-spice-finance-YC-hack/designs/analyse-20260627/analyse-v2.png` |
+| Execution | `~/.gstack/projects/briacSck-spice-finance-YC-hack/designs/execution-20260627/execution-v2.png` |
+| 3-screen board | `~/.gstack/projects/briacSck-spice-finance-YC-hack/designs/spice-3screen-board.html` |
+
+### NOT in scope (deferred, with rationale)
+- **Responsive / mobile** — demo is fixed 1280×832; production runs headless. No viewport work.
+- **Dark theme** — single light theme; revisit only if the rehearsal projector glares badly.
+- **Auth / onboarding / settings** — demo has none; out of the 48h.
+- **Real charting lib** — the donut + bars are hand-rolled CSS; no D3/Recharts dependency for the demo.
+
+---
+
 ## The hero demo — "The bakery that hedges like a trading desk"
 
 A continuous ~2-minute story. Real engine output, real testnet/paper execution, one live dramatic payout.
@@ -88,7 +129,7 @@ A continuous ~2-minute story. Real engine output, real testnet/paper execution, 
 - **Engine (quant):** Python. Forecasting on commodity price history (the "T0" model or an AI black-box agent), cost-center decomposition (budget share, variance, cost of insurance), shock propagation to margin, before/after VaR. Real math, bounded scope.
 - **Agents:** **Claude Opus 4.8**, plain Anthropic SDK tool-calling (no graph framework). One **orchestrator** + specialists: **Risk/Analysis**, **Hedging** (options + escrow insurance), **Placement** (Aave/Morpho yield). Tools: `decompose_costs`, `forecast_commodity`, `propagate_shock`, `hedge_options`, `lend_aave`, `take_escrow_policy`, `recall_cash`.
 - **Execution:** Alpaca options on commodity ETFs (paper) for the derivatives leg (real contract + queued order this weekend); Aave/Morpho on testnet (lending, trivial `sendFrom`); an Escrow contract (parametric payout) — the on-chain legs are the live settlement beat. Hyperliquid dropped (crypto perps, no commodity exposure). x402 / Polymarket / Bridge.xyz are optional stretch.
-- **Frontend (3 screens, demo-only — in production the agent runs headless):** lean local **Next.js + Tailwind**, nicely made but not load-bearing. (1) **Dashboard** — enterprise KPI tiles + AI status. (2) **Analyse** — cost decomposition, forecast, before/after VaR, and the AI's recommendations (*conseils*). (3) **Execution** — the specialist agents (Hedging, Placement) acting live across the options + on-chain venues, with the activity feed. No auth, no onboarding. *(Detailed design → `/plan-design-review`.)*
+- **Frontend (3 screens, demo-only — in production the agent runs headless):** lean local **Next.js + Tailwind**, premium-fintech aesthetic (épuré), legible on a projector. (1) **Dashboard** — client identity + the "74% of costs are unhedged commodities" hook + agent status. (2) **Analyse** — exposure donut, the margin-collapse hero (11.0% → 3.3%), VaR, and Spice's recommended 3-venue hedge. (3) **Execution** — the specialist agents (Hedging, Placement) acting live across the options + on-chain venues, the activity feed, and the on-chain payout climax. No auth, no onboarding. **Design system + approved mockups locked in `DESIGN.md` (plan-design-review, 2026-06-27).**
 - **Data:** synthetic + benchmark. The founders build the commodity→input mapping KB + 2–3 synthetic businesses (bakery hero, trucking, plastics shop) and a commodity price history feed.
 
 ### Who builds what

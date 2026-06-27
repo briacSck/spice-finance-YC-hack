@@ -31,6 +31,12 @@ The first version maps expenses only to these commodity underlyings:
 | Wheat | Flour, bread, wheat, animal feed, part of meat when explicitly visible |
 | Fats | Butter, cream, fats, dairy fats |
 | Copper | Copper, wiring, electrical components, copper piping |
+| Steel / iron ore proxy | Carbon steel, galvanized steel substrate, rebar, sheet, tubes, profiles |
+| Aluminium | Aluminium profiles, sheets, frames, castings, aluminium-heavy components |
+| Zinc | Galvanization, zinc coating, plated fasteners, die-cast zinc hardware |
+| Nickel | Stainless steel, nickel alloying inputs, specialty alloys |
+| Tin | Solder, tinplate, electronics-adjacent consumables |
+| Lead | Batteries, shielding, lead components where explicitly visible |
 | Wood | Wood, pallets, wood packaging, timber, carpentry, construction wood |
 
 For instance for a bakery, flour is a business input whose cost depends on the underlying wheat.
@@ -42,6 +48,11 @@ Out of scope for v1:
 - Real hedge execution.
 - Options pricing or portfolio optimization.
 - Real-time market data.
+
+Note: for industrial SMBs, v1 should avoid a single generic "metal" bucket. It
+should preserve material-level exposure whenever the accounting labels make it
+visible: steel, aluminium, copper, zinc, nickel/stainless, tin and lead should be
+separate underlyings or proxies.
 
 ## Expected Input
 
@@ -298,4 +309,3 @@ For the bakery demo:
 6. Generate Markdown report.
 7. Add a CLI wrapper for local demo use.
 8. Connect JSON output to the frontend later.
-

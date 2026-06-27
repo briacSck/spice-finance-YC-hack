@@ -48,6 +48,16 @@ class MonthSpec:
     seasonality_col: int
 
 
+@dataclass(frozen=True)
+class MarketSeriesEntry:
+    line_name: str
+    underlying: str | None
+    market_code: str
+    unit: str
+    unit_price: float
+    series: PriceSeries
+
+
 def build_cash_plan_workbook(
     profile: BusinessProfile,
     output_path: Path,
@@ -219,7 +229,7 @@ def _build_expenses(
     profile: BusinessProfile,
     months: list[MonthSpec],
     data_provider: CommodityDataProvider,
-) -> tuple[dict[str, int], dict[str, PriceSeries]]:
+) -> tuple[dict[str, int], list[MarketSeriesEntry]]:
     ws["A1"] = f"{profile.business_type.title()} - Depenses detaillees"
     ws["A2"] = "Quantity x seasonality x unit price x inflation = monthly cost. Market rows use monthly price series."
 
@@ -235,7 +245,7 @@ def _build_expenses(
     current_category: str | None = None
     category_cost_rows: dict[str, list[int]] = {}
     category_subtotals: dict[str, int] = {}
-    used_series: dict[str, PriceSeries] = {}
+    used_series: list[MarketSeriesEntry] = []
 
     def close_category(category: str, next_row: int) -> int:
         subtotal_row = next_row
@@ -261,15 +271,26 @@ def _build_expenses(
             cost_row = row + 1
             months_iso = [month.iso_month for month in months]
             series = data_provider.get_series(line.market_code, months_iso, line.unit_price)
-            used_series[line.market_code] = series
+            used_series.append(
+                MarketSeriesEntry(
+                    line_name=line.name,
+                    underlying=line.underlying,
+                    market_code=line.market_code,
+                    unit=line.unit,
+                    unit_price=line.unit_price,
+                    series=series,
+                )
+            )
 
             ws.cell(row=price_row, column=1, value=line.category)
             ws.cell(row=price_row, column=2, value=f"{line.name} - market price")
+            ws.cell(row=price_row, column=3, value=line.monthly_quantity)
             ws.cell(row=price_row, column=4, value=line.unit)
             ws.cell(row=price_row, column=5, value=f"=AVERAGE(H{price_row}:{get_column_letter(7 + len(months))}{price_row})")
             ws.cell(row=price_row, column=6, value=line.underlying)
             ws.cell(row=price_row, column=7, value=f"{series.source}; normalized to model unit price")
             _style_source(ws.cell(row=price_row, column=7))
+            _style_input(ws.cell(row=price_row, column=3))
             for month in months:
                 value = series.points[month.index].value
                 ws.cell(row=price_row, column=8 + month.index, value=value)
@@ -279,13 +300,19 @@ def _build_expenses(
             ws.cell(row=cost_row, column=2, value=f"Cost ({line.name})")
             ws.cell(row=cost_row, column=3, value=line.monthly_quantity)
             ws.cell(row=cost_row, column=4, value=line.unit)
+            ws.cell(row=cost_row, column=5, value=f"=E{price_row}")
             ws.cell(row=cost_row, column=6, value=line.underlying)
             ws.cell(row=cost_row, column=7, value="Cost = quantity x seasonality x monthly market price")
             _style_input(ws.cell(row=cost_row, column=3))
+            _style_formula(ws.cell(row=cost_row, column=5))
             for month in months:
                 col = get_column_letter(8 + month.index)
-                season_col = get_column_letter(month.seasonality_col)
-                formula = f"=$C{cost_row}*'{HYP}'!{season_col}$17*{col}{price_row}"
+                if line.seasonality_linked:
+                    season_col = get_column_letter(month.seasonality_col)
+                    season_multiplier = f"*'{HYP}'!{season_col}$17"
+                else:
+                    season_multiplier = ""
+                formula = f"=$C{cost_row}{season_multiplier}*{col}{price_row}"
                 ws.cell(row=cost_row, column=8 + month.index, value=formula)
                 _style_formula(ws.cell(row=cost_row, column=8 + month.index))
             category_cost_rows[line.category].append(cost_row)
@@ -451,21 +478,25 @@ def _build_cash_plan(
         _style_section_row(ws, row, 2 + len(months))
 
 
-def _build_market_data(ws: Worksheet, used_series: dict[str, PriceSeries]) -> None:
+def _build_market_data(ws: Worksheet, used_series: list[MarketSeriesEntry]) -> None:
     ws["A1"] = "Market data used by model"
     ws["A2"] = "External series are normalized to each model unit price to preserve realistic movement without unit mismatch."
-    headers = ["Code", "Source", "Month", "Value"]
+    headers = ["Cost line", "Underlying", "Market code", "Source", "Model unit", "Model unit price", "Month", "Value"]
     for col, header in enumerate(headers, start=1):
         ws.cell(row=4, column=col, value=header)
     row = 5
-    for code, series in sorted(used_series.items()):
-        for point in series.points:
-            ws.cell(row=row, column=1, value=code)
-            ws.cell(row=row, column=2, value=point.source)
-            ws.cell(row=row, column=3, value=point.month)
-            ws.cell(row=row, column=4, value=point.value)
+    for entry in sorted(used_series, key=lambda item: (item.market_code, item.line_name)):
+        for point in entry.series.points:
+            ws.cell(row=row, column=1, value=entry.line_name)
+            ws.cell(row=row, column=2, value=entry.underlying)
+            ws.cell(row=row, column=3, value=entry.market_code)
+            ws.cell(row=row, column=4, value=point.source)
+            ws.cell(row=row, column=5, value=entry.unit)
+            ws.cell(row=row, column=6, value=entry.unit_price)
+            ws.cell(row=row, column=7, value=point.month)
+            ws.cell(row=row, column=8, value=point.value)
             row += 1
-    _style_section_row(ws, 4, 4)
+    _style_section_row(ws, 4, 8)
 
 
 def _build_sources(ws: Worksheet, profile: BusinessProfile, data_provider: CommodityDataProvider) -> None:
@@ -564,4 +595,3 @@ def _style_total_row(ws: Worksheet, row: int, max_col: int) -> None:
 
 def add_source_comment(cell: Cell, text: str) -> None:
     cell.comment = Comment(text, "Spice")
-

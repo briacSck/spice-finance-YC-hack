@@ -44,6 +44,11 @@ def parse_args() -> argparse.Namespace:
         help="Optional Alpha Vantage API key for commodity endpoints.",
     )
     parser.add_argument(
+        "--entsoe-token",
+        default=None,
+        help="Optional ENTSO-E security token for France day-ahead electricity prices.",
+    )
+    parser.add_argument(
         "--insee-sdmx-url",
         default=None,
         help="Optional full INSEE BDM/SDMX URL to fetch and cache for benchmark work.",
@@ -73,6 +78,7 @@ def main() -> int:
     args = parse_args()
     profile = infer_business_profile(args.business_type, args.annual_revenue, args.seed)
     alpha_vantage_key = args.alpha_vantage_key or _load_secret("ALPHA_VANTAGE_API_KEY")
+    entsoe_token = args.entsoe_token or _load_secret("ENTSOE_SECURITY_TOKEN")
 
     output_path = args.output
     if output_path is None:
@@ -82,6 +88,7 @@ def main() -> int:
         cache_dir=args.cache_dir,
         online=args.online,
         alpha_vantage_key=alpha_vantage_key,
+        entsoe_token=entsoe_token,
         seed=args.seed,
     )
 
@@ -108,6 +115,7 @@ def main() -> int:
     print(f"Revenue A1: {profile.annual_revenue:,.0f} EUR")
     print(f"API mode: {'online' if args.online else 'offline'}")
     print(f"Alpha Vantage: {'configured' if alpha_vantage_key else 'not configured'}")
+    print(f"ENTSO-E: {'configured' if entsoe_token else 'not configured'}")
     return 0
 
 
