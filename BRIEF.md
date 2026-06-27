@@ -39,7 +39,7 @@ This translation layer is the product's brain and the start of its moat. Nobody 
 
 Stripe (Bridge) and Circle cracked **stablecoin payments** — moving dollars programmatically. But they stopped at payments. **Nobody cracked the real-world risk layer**: using those same programmable rails to let an ordinary business *hedge, insure, and finance* itself. That's the open frontier.
 
-- **Onchain derivatives with open APIs and leverage** (Hyperliquid) make small, capital-light commodity hedges possible for the first time.
+- **Options on commodity ETFs (Alpaca) and on-chain derivatives (Hyperliquid)** make small, capital-light commodity hedges possible for the first time.
 - **x402** (agentic stablecoin payments) lets an AI agent pay for and execute these actions natively.
 - **Lending (Aave/Morpho), prediction markets (Polymarket), and escrow** give an agent a full toolkit: yield, event hedges, parametric insurance — all programmable, all 24/7.
 - YC made **Stablecoin Financial Services** a Spring 2026 RFS. The jury is hunting for exactly the real-world layer on top of the rails they already funded.
