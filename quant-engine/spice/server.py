@@ -24,7 +24,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
-from . import scenario
+from . import agent, scenario
 from .company_view import company_view
 
 STEP_DELAY = 0.9       # seconds between streamed events (demo pacing)
@@ -65,6 +65,28 @@ async def _scripted_producer(run: Run) -> None:
         await run.queue.put(None)  # sentinel: stream complete
 
 
+async def _agent_producer(run: Run) -> None:
+    """The live run: the Opus agent emits the pre-trigger beats, then the operator
+    fires the on-chain climax (the scripted payout tail, reused)."""
+    async def emit(ev: dict) -> None:
+        await run.queue.put(ev)
+        await asyncio.sleep(STEP_DELAY * 0.5)
+
+    try:
+        await agent.run_agent(emit)
+        try:
+            await asyncio.wait_for(run.trigger.wait(), timeout=AUTO_TRIGGER)
+        except asyncio.TimeoutError:
+            pass
+        await _emit(run, scenario.mock_post())
+    except Exception as e:  # never hang the stream on an agent error
+        await run.queue.put({"type": "agent_message", "who": "Orchestrator",
+                             "text": f"(agent error, falling back) {e}"})
+        await _emit(run, scenario.mock_post())
+    finally:
+        await run.queue.put(None)
+
+
 @app.get("/health")
 async def health() -> dict:
     return {"ok": True}
@@ -80,8 +102,9 @@ async def api_run(mock: bool = False) -> dict:
     run_id = f"r_{uuid.uuid4().hex[:8]}"
     run = Run()
     RUNS[run_id] = run
-    # live path will call spice.agent; scripted producer used for mock and as fallback.
-    run.task = asyncio.create_task(_scripted_producer(run))
+    # mock or no API key -> deterministic scripted run; otherwise the live Opus agent.
+    producer = _scripted_producer if (mock or not agent.has_key()) else _agent_producer
+    run.task = asyncio.create_task(producer(run))
     return {"run_id": run_id}
 
 
