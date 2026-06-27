@@ -33,6 +33,25 @@ COMMODITIES: dict[str, Commodity] = {
 }
 
 
+# ticker -> INSEE BDM market code (see cashplan/data_sources.py:INSEE_SERIES).
+# Used to compute real historical price volatility instead of the static
+# annual_vol guess above. Tickers absent here have no usable INSEE series.
+INSEE_CODE: dict[str, str] = {
+    "USO": "BRENT",
+    "UNG": "NATURAL_GAS",
+    "WEAT": "WHEAT",
+    "SOYB": "DAIRY_FATS",
+    "CPER": "COPPER",
+    "XLU": "ELECTRICITY",
+    "WOOD": "WOOD",
+    "DBB": "ALUMINUM",
+}
+
+
+def insee_code(ticker: str) -> str | None:
+    return INSEE_CODE.get(ticker.upper())
+
+
 def vol(ticker: str) -> float:
     c = COMMODITIES.get(ticker.upper())
     return c.annual_vol if c else 0.0
@@ -65,6 +84,7 @@ _UNDERLYING_TO_TICKER: dict[str, str] = {
     "fats": "SOYB", "fat": "SOYB",
     "copper": "CPER", "cuivre": "CPER",
     "wood": "WOOD", "bois": "WOOD",
+    "packaging": "WOOD", "paper": "WOOD", "cardboard": "WOOD", "carton": "WOOD",
     "corn": "CORN", "mais": "CORN",
     "steel": "SLX", "acier": "SLX",
     "aluminium": "DBB", "aluminum": "DBB", "zinc": "DBB",
@@ -88,7 +108,8 @@ _KEYWORDS: dict[str, tuple[str, ...]] = {
              "plomberie", "brass", "laiton"),
     "XLU": ("electricity", "électricité", "electricite", "power", "courant", "kwh"),
     "WOOD": ("wood", "bois", "lumber", "timber", "charpente", "menuiserie",
-             "palette", "panneau", "contreplaqué", "osb", "papier", "carton"),
+             "palette", "panneau", "contreplaqué", "osb", "papier", "paper",
+             "carton", "cardboard", "packaging", "emballage"),
     "SLX": ("steel", "acier", "rebar", "structural steel"),
     "DBB": ("aluminium", "aluminum", "alu", "zinc", "galvanis"),
 }

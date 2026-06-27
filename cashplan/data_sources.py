@@ -75,6 +75,12 @@ INSEE_SERIES = {
     "ZINC": "010002072",
 }
 
+INSEE_DIRECT_PRICE_CONVERSIONS = {
+    "COPPER": ("EUR/tonne -> EUR/kg", lambda value: value / 1000),
+    "NATURAL_GAS": ("EUR/MWh -> EUR/kWh", lambda value: value / 1000),
+    "NICKEL": ("EUR/tonne -> EUR/kg", lambda value: value / 1000),
+}
+
 DEFAULT_BASE_PRICES = {
     "WTI": 78.0,
     "BRENT": 82.0,
@@ -144,6 +150,7 @@ class PriceSeries:
     code: str
     points: list[PricePoint]
     source: str
+    price_basis: str = "normalized to model unit price"
 
     def values_for_months(self, months: list[str], default: float) -> list[float]:
         by_month = {point.month: point.value for point in self.points}
@@ -182,6 +189,8 @@ class CommodityDataProvider:
         if self.online and normalized_code in INSEE_SERIES:
             series = self._fetch_insee_series(normalized_code)
             if series and series.points:
+                if normalized_code in INSEE_DIRECT_PRICE_CONVERSIONS:
+                    return _convert_direct_price_series(series, normalized_code, months)
                 return _trim_or_extend(series, months, unit_price_hint or DEFAULT_BASE_PRICES.get(normalized_code, 1.0))
 
         if self.online and self.alpha_vantage_key and normalized_code in ALPHA_VANTAGE_SUPPORTED:
@@ -527,6 +536,25 @@ def _add_month(value: datetime) -> datetime:
     if value.month == 12:
         return datetime(value.year + 1, 1, 1)
     return datetime(value.year, value.month + 1, 1)
+
+
+def _convert_direct_price_series(series: PriceSeries, code: str, months: list[str]) -> PriceSeries:
+    label, converter = INSEE_DIRECT_PRICE_CONVERSIONS[code]
+    values = series.values_for_months(months, DEFAULT_BASE_PRICES.get(code, 1.0))
+    points = [
+        PricePoint(
+            month=month,
+            value=round(converter(value), 4),
+            source=series.source,
+        )
+        for month, value in zip(months, values, strict=True)
+    ]
+    return PriceSeries(
+        code=series.code,
+        points=points,
+        source=series.source,
+        price_basis=f"direct INSEE price converted ({label})",
+    )
 
 
 def _trim_or_extend(series: PriceSeries, months: list[str], default: float) -> PriceSeries:

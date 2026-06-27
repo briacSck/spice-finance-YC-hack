@@ -288,7 +288,7 @@ def _build_expenses(
             ws.cell(row=price_row, column=4, value=line.unit)
             ws.cell(row=price_row, column=5, value=f"=AVERAGE(H{price_row}:{get_column_letter(7 + len(months))}{price_row})")
             ws.cell(row=price_row, column=6, value=line.underlying)
-            ws.cell(row=price_row, column=7, value=f"{series.source}; normalized to model unit price")
+            ws.cell(row=price_row, column=7, value=f"{series.source}; {series.price_basis}")
             _style_source(ws.cell(row=price_row, column=7))
             _style_input(ws.cell(row=price_row, column=3))
             for month in months:
