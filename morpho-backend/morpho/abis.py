@@ -1,0 +1,42 @@
+"""Minimal ABIs for ERC-20 (USDC) and ERC-4626 (Morpho vault)."""
+
+ERC20_ABI = [
+    {"name": "approve", "type": "function", "stateMutability": "nonpayable",
+     "inputs": [{"name": "spender", "type": "address"}, {"name": "amount", "type": "uint256"}],
+     "outputs": [{"type": "bool"}]},
+    {"name": "allowance", "type": "function", "stateMutability": "view",
+     "inputs": [{"name": "owner", "type": "address"}, {"name": "spender", "type": "address"}],
+     "outputs": [{"type": "uint256"}]},
+    {"name": "balanceOf", "type": "function", "stateMutability": "view",
+     "inputs": [{"name": "account", "type": "address"}], "outputs": [{"type": "uint256"}]},
+    {"name": "decimals", "type": "function", "stateMutability": "view",
+     "inputs": [], "outputs": [{"type": "uint8"}]},
+]
+
+ERC4626_ABI = [
+    {"name": "asset", "type": "function", "stateMutability": "view",
+     "inputs": [], "outputs": [{"type": "address"}]},
+    {"name": "decimals", "type": "function", "stateMutability": "view",
+     "inputs": [], "outputs": [{"type": "uint8"}]},
+    {"name": "totalAssets", "type": "function", "stateMutability": "view",
+     "inputs": [], "outputs": [{"type": "uint256"}]},
+    {"name": "balanceOf", "type": "function", "stateMutability": "view",
+     "inputs": [{"name": "account", "type": "address"}], "outputs": [{"type": "uint256"}]},
+    {"name": "maxWithdraw", "type": "function", "stateMutability": "view",
+     "inputs": [{"name": "owner", "type": "address"}], "outputs": [{"type": "uint256"}]},
+    {"name": "convertToAssets", "type": "function", "stateMutability": "view",
+     "inputs": [{"name": "shares", "type": "uint256"}], "outputs": [{"type": "uint256"}]},
+    {"name": "convertToShares", "type": "function", "stateMutability": "view",
+     "inputs": [{"name": "assets", "type": "uint256"}], "outputs": [{"type": "uint256"}]},
+    {"name": "deposit", "type": "function", "stateMutability": "nonpayable",
+     "inputs": [{"name": "assets", "type": "uint256"}, {"name": "receiver", "type": "address"}],
+     "outputs": [{"name": "shares", "type": "uint256"}]},
+    {"name": "withdraw", "type": "function", "stateMutability": "nonpayable",
+     "inputs": [{"name": "assets", "type": "uint256"}, {"name": "receiver", "type": "address"},
+                {"name": "owner", "type": "address"}],
+     "outputs": [{"name": "shares", "type": "uint256"}]},
+    {"name": "redeem", "type": "function", "stateMutability": "nonpayable",
+     "inputs": [{"name": "shares", "type": "uint256"}, {"name": "receiver", "type": "address"},
+                {"name": "owner", "type": "address"}],
+     "outputs": [{"name": "assets", "type": "uint256"}]},
+]
