@@ -29,6 +29,28 @@
 
 ---
 
+## Eng-review decisions (locked 2026-06-27)
+
+**D1 — On-stage P&L comes from the scenario engine, not live quotes.** The quant engine outputs a position-level P&L under the triggered shock; the UI shows that as the live number. Real venue artifacts (order id, tx hash) sit next to it as proof. Never wire the climax to live option prices (options barely move in 2 min and thin ETF options may not quote).
+
+**D2 — Three processes, boundaries on language lines.** One Python service = orchestrator + quant engine (in-process modules). The existing Alpaca FastAPI stays its own service. One Node service = blockchain (Aave/Morpho + Escrow, viem/Solidity). The Next.js frontend talks ONLY to the orchestrator (REST + WebSocket for the activity feed). No separate quant HTTP service.
+
+**D3 — Weekend reality (markets closed Sat+Sun): the live settlement beat is on-chain.**
+- **Aave deposit + Escrow payout (testnet) are the live "real money moves" beat** — they run 24/7 and actually settle on stage tomorrow.
+- **Alpaca stays real without a fill:** the agent resolves a real OCC option contract (`/chain` works market-closed) and submits a real paper order that queues (status `accepted`, fills Monday) for a real order id. **2-min check today:** submit one test paper option order; if it returns an order id, the queued-order proof is live; if it rejects, show "contract resolved + order prepared" instead.
+- **Hyperliquid dropped as the derivatives fallback** — it has crypto perps, not commodity exposure, so it can't hedge wheat/gas. The derivatives leg is Alpaca-only.
+
+**Jury calibration:** on-chain is the rail, not the thesis. Lead with real-economy risk + serious quant; present on-chain as "programmable, 24/7, instant, low-minimum," not a crypto bet. The jury knows stablecoins exist but won't be crypto-bullish ex ante.
+
+**Code-quality notes (Alpaca backend, already built — `alpaca-backend/`):**
+- Solid, keep: `client`/`service`/`contracts` split, the FR+EN exposure registry + word-boundary inference (`infer_exposures`), error handling, tests.
+- Fix (~5 min): `alpaca/client.py` imports `from ibkr.config import alpaca_settings` — move shared settings to a neutral `config.py` so Alpaca doesn't depend on the `ibkr` namespace.
+- Defer: README + FastAPI titles say "YIELD"/"ibkr-backend" → rename to Spice. The dead IBKR module is harmless once config is extracted.
+
+**Test priority (right-sized for 48h):** the one path that must be correct is the **quant scenario P&L math** (decomposition → shock → position P&L → VaR) — the demo's believability rests on it. Unit-test that + the inference mapping. Smoke-test orchestrator tool-routing and the on-chain settlement call. Skip exhaustive coverage.
+
+---
+
 ## The hero demo — "The bakery that hedges like a trading desk"
 
 A continuous ~2-minute story. Real engine output, real testnet/paper execution, one live dramatic payout.
@@ -39,11 +61,11 @@ A continuous ~2-minute story. Real engine output, real testnet/paper execution, 
 1. **Ingest** the bakery's accounting (synthetic data we generate) + cash position. ~30s.
 2. **The engine thinks out loud** (agent activity feed): it **decomposes the cost structure** — "41% of your costs are wheat, 22% energy (gas + power), 11% fats" — forecasts a wheat + gas spike from commodity history, and **propagates** it to margin: "net margin falls from 11% to 4% over the next quarter." This is the quant "holy shit": a bakery's P&L re-expressed as a commodity portfolio with a VaR.
 3. **The orchestrator proposes a hedge** and reasons through it, then executes across three venues:
-   - **Alpaca options on ETFs (hero, paper):** buys calls on a wheat ETF + a gas ETF (e.g. WEAT, UNG) to offset the input-cost exposure. Hyperliquid is the on-chain fallback if Alpaca's API is blocked.
-   - **Escrow / parametric insurance:** takes a policy that pays out if an energy-price index crosses a trigger.
+   - **Alpaca options (real contract, paper):** resolves a real commodity-ETF option (e.g. UNG/USO) and submits a real paper order; markets are closed this weekend so it queues (real order id, fills Monday). The hedge's P&L is shown from the scenario engine (D1), not a live fill.
+   - **Escrow / parametric insurance (testnet):** takes a policy that pays out if an energy-price index crosses a trigger.
    - **Aave/Morpho (testnet):** sweeps idle cash into yield to fund the hedge premiums, recallable.
 4. **Re-forecast:** the margin distribution tightens, VaR drops. Before/after risk curve, side by side.
-5. **Live beat:** trigger the price spike on stage → the options hedge gains and the escrow pays out → the bakery's margin holds while an unhedged peer's collapses. The AI didn't predict the risk, it *pre-bought protection that just paid out*.
+5. **Live beat (on-chain, settles on stage):** trigger the price spike → the Escrow parametric policy pays out and the Aave position is recalled, **live on testnet** (24/7, works this weekend) → the scenario engine shows the bakery's margin holding while an unhedged peer's collapses. The AI didn't predict the risk, it *pre-bought protection that just paid out*.
 6. **The vision close:** "Multiply this by a million ordinary businesses and you don't just have a hedging tool — you have the real-time micro-map of the entire real economy. That's what we sell to hedge funds and central banks."
 
 **Why it beats the room:** real quant + real on-chain execution + the most ordinary imaginable business. Everyone else demos a chat box over a spreadsheet. Spice turns a boulangerie into a hedge fund and shows the macro endgame.
@@ -54,7 +76,7 @@ A continuous ~2-minute story. Real engine output, real testnet/paper execution, 
 
 1. **Opportunity** — every ordinary business is an unhedged commodity trader; the rails to fix it just arrived.
 2. **Problem → Solution** — they're blind and exposed; Spice sees, forecasts, and hedges autonomously.
-3. **Rising market** — Stripe (Bridge) and Circle cracked stablecoin payments but stopped there; nobody cracked the **real-world risk layer**. That's the frontier, and it's the YC stablecoin RFS.
+3. **Rising market** — Stripe (Bridge) and Circle cracked stablecoin payments but stopped there; nobody cracked the **real-world risk layer**: using programmable rails to let an ordinary business hedge, insure, and finance itself. That's the frontier. *(Lead with the real-economy value; the rails are plumbing, not a crypto thesis.)*
 4. **How it works** — the live demo above.
 5. **The big model** — cash + data pooling → the macro intelligence central banks can't get → the décacorn.
 
@@ -65,13 +87,13 @@ A continuous ~2-minute story. Real engine output, real testnet/paper execution, 
 ### Stack
 - **Engine (quant):** Python. Forecasting on commodity price history (the "T0" model or an AI black-box agent), cost-center decomposition (budget share, variance, cost of insurance), shock propagation to margin, before/after VaR. Real math, bounded scope.
 - **Agents:** **Claude Opus 4.8**, plain Anthropic SDK tool-calling (no graph framework). One **orchestrator** + specialists: **Risk/Analysis**, **Hedging** (options + escrow insurance), **Placement** (Aave/Morpho yield). Tools: `decompose_costs`, `forecast_commodity`, `propagate_shock`, `hedge_options`, `lend_aave`, `take_escrow_policy`, `recall_cash`.
-- **Execution:** Alpaca options on commodity ETFs (paper) as the derivatives hero, Hyperliquid as on-chain fallback; Aave/Morpho on testnet (lending, trivial `sendFrom`); an Escrow contract (parametric payout). x402 / Polymarket / Bridge.xyz are optional stretch.
+- **Execution:** Alpaca options on commodity ETFs (paper) for the derivatives leg (real contract + queued order this weekend); Aave/Morpho on testnet (lending, trivial `sendFrom`); an Escrow contract (parametric payout) — the on-chain legs are the live settlement beat. Hyperliquid dropped (crypto perps, no commodity exposure). x402 / Polymarket / Bridge.xyz are optional stretch.
 - **Frontend (3 screens, demo-only — in production the agent runs headless):** lean local **Next.js + Tailwind**, nicely made but not load-bearing. (1) **Dashboard** — enterprise KPI tiles + AI status. (2) **Analyse** — cost decomposition, forecast, before/after VaR, and the AI's recommendations (*conseils*). (3) **Execution** — the specialist agents (Hedging, Placement) acting live across the options + on-chain venues, with the activity feed. No auth, no onboarding. *(Detailed design → `/plan-design-review`.)*
 - **Data:** synthetic + benchmark. The founders build the commodity→input mapping KB + 2–3 synthetic businesses (bakery hero, trucking, plastics shop) and a commodity price history feed.
 
 ### Who builds what
 - **Quant:** the analysis engine end to end (decomposition → forecast → propagation → VaR). *Owns the depth.*
-- **Blockchain/fullstack dev:** the three on-chain venues (Hyperliquid hedge, Aave/Morpho lend, Escrow payout) + x402 wiring. *Owns credibility.*
+- **Blockchain/fullstack dev:** the Node blockchain service — Aave/Morpho lend + Escrow policy/payout (testnet), exposed to the orchestrator over localhost. *Owns the live on-chain settlement.*
 - **Frontend/data + fullstack:** the Next.js front demo, agent activity feed, synthetic data generation. *Owns the show.*
 - **Founder 1 (you):** orchestrator + specialist agents, the venue-routing logic, integration glue. *Owns the brain's behavior.*
 - **Founder 2 (Sara):** commodity→input mapping KB, synthetic businesses + scenarios, the quant↔agent bridge, and the pitch narrative. *Owns the story + the data.*
@@ -85,14 +107,14 @@ A continuous ~2-minute story. Real engine output, real testnet/paper execution, 
 
 ### Risks & mitigations
 - **Three venue integrations in 48h** → the brain is the priority; if a venue slips, Alpaca options + Escrow are the two that must be live, Aave is the easy third, x402/Polymarket/Bridge are cut first.
-- **Live trigger flakiness** → controllable mock oracle for the escrow + pre-warmed positions; recorded backup of the exact tx flow.
-- **Alpaca API access** → if Alpaca's options API is blocked or slow, fall back to Hyperliquid (on-chain, open API) for the derivatives leg. Decide in H0–6.
+- **Live trigger flakiness** → a controllable scenario clock drives the shock + the displayed P&L (D1); the escrow reads a settable mock oracle; pre-deploy + pre-fund testnet wallets; recorded backup of the exact tx flow.
+- **Markets closed all weekend** → no options fill is possible Sat/Sun. The live settlement beat is on-chain (Escrow + Aave, testnet, 24/7); Alpaca shows a real resolved contract + a real queued order (verify weekend orders are accepted with a 2-min test submit today).
 - **Quant scope creep** → bound it: decomposition + one forecast + one propagation + one before/after VaR. No multi-factor model, no full backtest engine for the demo.
 
 ---
 
 ## Verification — before stage
 1. **Engine:** changing the synthetic bakery's cost mix changes the decomposition and the VaR correctly (not hardcoded).
-2. **Execution:** the Alpaca options fill (paper), the Aave deposit, and the Escrow payout are all visible on the venue / on-chain with the agent as actor.
-3. **Live beat:** triggering the price spike makes the hedge gain and the escrow pay out, on stage, repeatably (≥5 clean runs + recorded fallback).
+2. **Execution:** the Aave deposit and Escrow payout settle on testnet (visible by tx hash, agent wallet as actor); the Alpaca leg shows a real resolved contract + a real queued order id.
+3. **Live beat:** triggering the scenario shock fires the Escrow payout + Aave recall on-chain and updates the displayed P&L, on stage, repeatably (≥5 clean runs + recorded fallback).
 4. **Agents:** the activity feed shows real tool calls and reasoning; changing a seed changes the hedge plan.

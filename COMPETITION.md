@@ -44,7 +44,7 @@ Legend: ✅ yes · ◐ partial · ✗ no
 | **Circle / USDC** | The dollar rail itself | Anything an SMB *does* with it beyond holding/paying |
 | **Hyperliquid / Aave / Polymarket** | Programmable derivatives, lending, event markets | A brain that maps an ordinary business's risk onto them |
 
-The payments layer is solved. **The layer that lets a bakery actually hedge its wheat-and-gas exposure on those rails does not exist.** That is the frontier, and it is exactly the YC Spring 2026 Stablecoin RFS.
+The payments layer is solved. **The layer that lets a bakery actually hedge its wheat-and-gas exposure on those rails does not exist.** That is the frontier: the real-world risk layer on top of rails that exist but are payments-only today.
 
 ## The killer line for the jury
 
