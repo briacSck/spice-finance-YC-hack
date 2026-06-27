@@ -36,9 +36,19 @@ Legend: ✅ yes · ◐ partial · ✗ no
 
 ---
 
+## The frontier Stripe and Circle opened but didn't finish
+
+| Player | Cracked | Did NOT crack |
+|---|---|---|
+| **Stripe / Bridge.xyz** | Stablecoin payments + fiat on/off-ramp | The **real-world risk layer** — using the rails to hedge/insure/finance a real business |
+| **Circle / USDC** | The dollar rail itself | Anything an SMB *does* with it beyond holding/paying |
+| **Hyperliquid / Aave / Polymarket** | Programmable derivatives, lending, event markets | A brain that maps an ordinary business's risk onto them |
+
+The payments layer is solved. **The layer that lets a bakery actually hedge its wheat-and-gas exposure on those rails does not exist.** That is the frontier, and it is exactly the YC Spring 2026 Stablecoin RFS.
+
 ## The killer line for the jury
 
-> *"Every European cash-flow tool stops at the glass — they show the SMB its problems and hand them back. We're the first with hands on the money. **Agicap is a dashboard; YIELD is a CFO.** And YC just made the rail we run on — stablecoin treasury — a Request For Startups."*
+> *"Stripe and Circle made dollars programmable. We make the real economy programmable — we find the commodity risk hiding in an ordinary business's books and hedge it on rails that were payments-only until now. Agicap shows a bakery a dashboard; Spice turns it into a trading desk."*
 
 ---
 
@@ -52,9 +62,13 @@ YIELD is the only player combining the **brain** (forecasting depth) + the **rai
 
 ---
 
-## Defensibility
+## Defensibility — the data moat central banks can't build
 
-The **data flywheel**: every SMB onboarded sharpens cross-network forecasts of receivable behavior and supplier health — credit intelligence no bank can replicate (they don't see the supply chain). The **execution layer** compounds it: once we move the money, we're the system of record; switching = handing cash ops back to Excel.
+Per-business, Spice is a hedging tool. At scale it becomes irreplaceable:
+
+- **Cash pooling** — pooled SMB liquidity gets hedge pricing and execution no single small business could.
+- **Data pooling** — Spice sees the real cost structures, margins, and commodity exposures of millions of ordinary businesses, **in real time, at the micro level**: a live, ground-truth picture of the real economy.
+- **The endgame** — that dataset is worth more to **hedge funds and central banks** than the SaaS ever will be. They forecast the real economy from lagging surveys; Spice has the micro-level, real-time truth they structurally cannot get. Sell hedging to SMBs; sell the real economy's nervous system to the people who move markets.
 
 ---
 
