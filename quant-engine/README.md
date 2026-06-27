@@ -1,11 +1,11 @@
-# spice-backend
+# quant-engine
 
-Orchestrator + quant engine for Spice (the autonomous commodity-hedging desk).
+Quant engine + orchestrator for Spice (the autonomous commodity-hedging desk).
 
 ## Quant engine (runnable now, zero deps)
 
 ```bash
-cd spice-backend
+cd quant-engine
 python run_analysis.py
 ```
 

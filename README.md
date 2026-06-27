@@ -34,13 +34,13 @@ Built for a YC hackathon (décacorn track).
 | [`BRIEF.md`](BRIEF.md) | The idea, insight, beachhead, moat |
 | [`COMPETITION.md`](COMPETITION.md) | Competitive whitespace map |
 | [`DEMO.md`](DEMO.md) | Architecture, hero demo, 48h build plan, locked decisions |
-| [`spice-backend/`](spice-backend/) | Quant engine (runnable) + orchestrator + [API contract](spice-backend/API_CONTRACT.md) |
+| [`quant-engine/`](quant-engine/) | Quant engine (runnable) + orchestrator + [API contract](quant-engine/API_CONTRACT.md) |
 | [`alpaca-backend/`](alpaca-backend/) | Commodity-ETF options service (FastAPI, paper) + the exposure-inference registry |
 
 ## Quickstart — see the brain run (zero deps)
 
 ```bash
-cd spice-backend
+cd quant-engine
 python run_analysis.py
 ```
 
