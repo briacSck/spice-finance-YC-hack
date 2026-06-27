@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* DESIGN.md tokens also exposed as CSS vars (for arbitrary use / charts) */
+:root {
+  --paper: #f4f3ef;
+  --panel: #ffffff;
+  --hair: #eceae3;
+  --hair2: #f2f0ea;
+  --ink-deep: #13231d;
+  --ink: #1a1916;
+  --dim: #797469;
+  --faint: #aba59a;
+  --green: #1b5e4c;
+  --terra: #a85436;
+}
+
+html,
+body {
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  font-family: "Satoshi", system-ui, sans-serif;
+}
+
+/* tabular numerics everywhere a number lives */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+@layer components {
+  /* uppercase label — used on every panel/section header */
+  .label {
+    @apply text-[10.5px] font-medium uppercase tracking-label text-faint;
+  }
+  /* the borderless floating card — DESIGN.md core component */
+  .card {
+    @apply rounded-[18px] bg-panel shadow-card;
+  }
+  .btn-primary {
+    @apply w-full rounded-[13px] bg-green px-4 py-4 text-center text-[14.5px] font-semibold text-paper transition-opacity hover:opacity-90;
+  }
+}
+
+/* pulsing live dot */
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(27, 94, 76, 0.35);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(27, 94, 76, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(27, 94, 76, 0);
+  }
+}
+.live-dot {
+  animation: pulse-ring 2s infinite;
+}
+
+/* feed event fade-in (DR4 motion) */
+@keyframes ev-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.ev-in {
+  animation: ev-in 0.35s ease-out both;
+}
