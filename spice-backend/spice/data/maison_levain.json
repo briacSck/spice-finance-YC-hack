@@ -1,0 +1,15 @@
+{
+  "name": "Maison Levain",
+  "revenue": 1400000,
+  "cash": 180000,
+  "cost_lines": [
+    { "label": "Salaires", "annual_amount": 480000, "commodity": null },
+    { "label": "Farine T65", "annual_amount": 300000, "commodity": "WEAT" },
+    { "label": "Beurre / matière grasse", "annual_amount": 150000, "commodity": "SOYB" },
+    { "label": "Gaz (four)", "annual_amount": 90000, "commodity": "UNG" },
+    { "label": "Électricité", "annual_amount": 70000, "commodity": "XLU" },
+    { "label": "Loyer", "annual_amount": 60000, "commodity": null },
+    { "label": "Transport / livraison", "annual_amount": 40000, "commodity": "USO" },
+    { "label": "Autres", "annual_amount": 56000, "commodity": null }
+  ]
+}
