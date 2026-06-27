@@ -136,33 +136,21 @@ the rule layer as the source of truth so the demo is explainable.
 
 ### 4. Compute Exposure Metrics
 
-For each underlying, compute:
-
-- total mapped spend
-- share of total expenses
-- share of revenue
-- monthly spend time series
-- month-over-month variability
-- trend over the available period
-- number of supporting rows
-- top contributing categories/vendors/descriptions
-- mapping confidence
-
-The key business metric is margin
-sensitivity.
-
-
 for each underlying, compute:
 - the total spent on costs related to this product
 - its share of total revenue
-- for each business input mapped to this underlying, the ratio: standard_deviation(unit price of the business input )
+- for each business input mapped to this underlying, the ratio: standard_deviation_of(unit price of the business input) / mean_of(unit price of the business input). This evaluates the typical percentage variation of the business input. For instance, if the flour of a bakery varies from 1€/kg and 3€/kg, the ratio would be around 1/2.
+- the sensitivity of the price of the unit business input to the price of the underlying.    
+- using all of these, for each underlying, evaluate what in percentage of total business input expenses, how much a variation of 1% in the price of the underlying impact the expenses. 
+
+The key business metric is margin sensitivity to underlyings.
 
 ### 5. Stress Test Margin
 
 For each underlying, simulate price shocks:
 
 ```text
-+10%, +20%, +30%
++10%, +20%, +30%, based on historical data from Insee. To access the Insee database, it should use code from the file cashplan/business_profiles.py
 ```
 
 For each shock, estimate:
@@ -253,7 +241,7 @@ Markdown report.
   }
 }
 ```
-
+at the e
 #### Markdown Report
 
 The report should include:
