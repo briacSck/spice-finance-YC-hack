@@ -137,13 +137,13 @@ def infer_business_profile(
         return _scale_profile(_construction_profile(), annual_revenue)
     if any(word in text for word in ["restaurant", "traiteur", "cafe", "brasserie"]):
         return _scale_profile(_restaurant_profile(), annual_revenue)
-    if any(word in text for word in ["metal", "usinage", "foundry", "fonderie", "electricien", "zinc", "acier", "steel", "galvani", "chaudronnerie"]):
+    if any(word in text for word in ["metal", "usinage", "foundry", "fonderie", "electricien", "electrical", "cable", "hardware", "aluminium", "aluminum", "copper", "cuivre", "zinc", "acier", "steel", "inox", "stainless", "galvani", "chaudronnerie"]):
         return _scale_profile(_metalwork_profile(), annual_revenue)
     industrial_preset_key = infer_industrial_preset_key(text)
     if industrial_preset_key:
         return _industrial_generic_profile(
             business_type,
-            annual_revenue or 650_000,
+            annual_revenue or 1_500_000,
             industrial_preset_key,
             seed,
         )
@@ -197,22 +197,22 @@ def _bakery_profile() -> BusinessProfile:
         ],
         cost_lines=[
             CostLine("Raw materials", "Wheat flour T55/T65", 5000, "kg", 0.56, "Market proxy: WHEAT", "Wheat", "WHEAT", 0.08),
-            CostLine("Raw materials", "Tourage butter", 280, "kg", 6.20, "Wholesale BVP estimate", "Fats", None, 0.04),
-            CostLine("Raw materials", "Incorporation butter", 110, "kg", 5.10, "Wholesale BVP estimate", "Fats", None, 0.04),
-            CostLine("Raw materials", "Baker's yeast", 65, "kg", 3.60, "Supplier estimate", None, None, 0.02),
-            CostLine("Raw materials", "Salt", 55, "kg", 0.65, "Supplier estimate", None, None, 0.01),
-            CostLine("Raw materials", "Eggs", 2200, "unit", 0.25, "Food wholesaler estimate", None, None, 0.03),
-            CostLine("Raw materials", "Cream", 160, "L", 3.60, "Food wholesaler estimate", "Fats", None, 0.04),
-            CostLine("Raw materials", "Packaging", 13000, "unit", 0.06, "Packaging supplier estimate", "Oil", None, 0.03),
-            CostLine("Energy", "Electricity for ovens and refrigeration", 5800, "kWh", 0.17, "Electricity market/pro tariff proxy", "Electricity", None, 0.05),
+            CostLine("Raw materials", "Tourage butter", 280, "kg", 6.20, "INSEE butter producer-price index", "Fats", "BUTTER", 0.04),
+            CostLine("Raw materials", "Incorporation butter", 110, "kg", 5.10, "INSEE butter producer-price index", "Fats", "BUTTER", 0.04),
+            CostLine("Raw materials", "Baker's yeast", 65, "kg", 3.60, "INSEE other food products proxy", None, "YEAST", 0.02),
+            CostLine("Raw materials", "Salt", 55, "kg", 0.65, "INSEE salt producer-price index", None, "SALT", 0.01),
+            CostLine("Raw materials", "Eggs", 2200, "unit", 0.25, "INSEE egg producer-price index", None, "EGGS", 0.03),
+            CostLine("Raw materials", "Cream", 160, "L", 3.60, "INSEE cream producer-price index", "Fats", "CREAM", 0.04),
+            CostLine("Raw materials", "Packaging", 13000, "unit", 0.06, "INSEE paper/cardboard packaging index", "Packaging", "PACKAGING_PAPER", 0.03),
+            CostLine("Energy", "Electricity for ovens and refrigeration", 5800, "kWh", 0.17, "ENTSO-E or INSEE electricity index", "Electricity", "ELECTRICITY", 0.05),
             CostLine("Energy", "Gas for heating", 2600, "kWh", 0.10, "Natural gas market proxy", "Gas", "NATURAL_GAS", 0.08),
-            CostLine("Personnel", "Owner net compensation", 1, "monthly package", 3400, "Artisan benchmark", None, None, 0.00, False),
-            CostLine("Personnel", "Employee salary and charges", 1, "monthly package", 3000, "Bakery collective agreement estimate", None, None, 0.00, False),
-            CostLine("Fixed costs", "Commercial rent", 1, "monthly package", 3200, "Local lease estimate", None, None, 0.00, False),
+            CostLine("Personnel", "Owner net compensation", 1, "monthly package", 4200, "Fixed owner draw assumption", None, None, 0.00, False),
+            CostLine("Personnel", "Employee salary and charges", 1, "monthly package", 5600, "INSEE hospitality labor-cost index", None, "LABOR_HOSPITALITY", 0.00, False),
+            CostLine("Fixed costs", "Commercial rent", 1, "monthly package", 3200, "INSEE commercial rent index", None, "RENT_COMMERCIAL", 0.00, False),
             CostLine("Fixed costs", "Insurance", 1, "monthly package", 250, "Professional insurance estimate", None, None, 0.00, False),
-            CostLine("Fixed costs", "Maintenance", 1, "monthly package", 350, "Equipment maintenance estimate", None, None, 0.00, False),
-            CostLine("Fixed costs", "Accountant", 1, "monthly package", 500, "Accounting firm estimate", None, None, 0.00, False),
-            CostLine("Fixed costs", "Water", 1, "monthly package", 150, "Utility estimate", None, None, 0.00, False),
+            CostLine("Fixed costs", "Maintenance", 1, "monthly package", 350, "INSEE maintenance proxy", None, "MAINTENANCE", 0.00, False),
+            CostLine("Fixed costs", "Accountant", 1, "monthly package", 500, "INSEE accounting services index", None, "ACCOUNTING_SERVICES", 0.00, False),
+            CostLine("Fixed costs", "Water", 1, "monthly package", 150, "INSEE water retail-price series", None, "WATER", 0.00, False),
             CostLine("Fixed costs", "Bank fees and payment terminal", 1, "monthly package", 150, "Bank tariff estimate", None, None, 0.00, False),
         ],
         benchmark_notes=_default_source_notes(),
@@ -239,21 +239,21 @@ def _trucking_profile() -> BusinessProfile:
             RevenueStream("Warehousing and handling", 0.13),
         ],
         cost_lines=[
-            CostLine("Fuel and mobility", "Diesel fuel", 10500, "L", 1.62, "Fuel market proxy: oil", "Oil", "WTI", 0.08),
-            CostLine("Fuel and mobility", "Tires and rubber consumables", 12, "unit", 420, "Synthetic rubber proxy", "Oil", None, 0.04),
-            CostLine("Maintenance", "Truck maintenance and parts", 1, "monthly package", 6200, "Fleet maintenance estimate", "Oil", None, 0.03, False),
-            CostLine("Personnel", "Drivers payroll and charges", 1, "monthly package", 25500, "Transport payroll benchmark", None, None, 0.00, False),
-            CostLine("Fixed costs", "Vehicle leases", 1, "monthly package", 10200, "Truck lease estimate", None, None, 0.00, False),
-            CostLine("Fixed costs", "Insurance and permits", 1, "monthly package", 3600, "Fleet insurance estimate", None, None, 0.00, False),
-            CostLine("Fixed costs", "Depot rent and utilities", 1, "monthly package", 4200, "Depot operating estimate", "Electricity", None, 0.02, False),
-            CostLine("Fixed costs", "Admin, software, bank fees", 1, "monthly package", 2500, "SMB overhead estimate", None, None, 0.00, False),
+            CostLine("Fuel and mobility", "Diesel fuel", 8100, "L", 1.62, "INSEE diesel/gazole price series", "Oil", "DIESEL", 0.08),
+            CostLine("Fuel and mobility", "Tires and rubber consumables", 4, "unit", 420, "INSEE synthetic rubber producer-price index", "Rubber", "RUBBER", 0.04),
+            CostLine("Maintenance", "Truck maintenance and parts", 1, "monthly package", 2800, "INSEE maintenance proxy", "Maintenance", "MAINTENANCE", 0.03, False),
+            CostLine("Personnel", "Drivers payroll and charges", 1, "monthly package", 25500, "INSEE transport labor-cost index", None, "LABOR_TRANSPORT", 0.00, False),
+            CostLine("Fixed costs", "Vehicle leases", 1, "monthly package", 6400, "INSEE vehicle leasing services index", None, "EQUIPMENT_RENTAL", 0.00, False),
+            CostLine("Fixed costs", "Insurance and permits", 1, "monthly package", 2800, "Fleet insurance estimate", None, None, 0.00, False),
+            CostLine("Fixed costs", "Depot rent and utilities", 1, "monthly package", 3200, "INSEE commercial rent index", "Rent", "RENT_COMMERCIAL", 0.02, False),
+            CostLine("Fixed costs", "Admin, software, bank fees", 1, "monthly package", 2500, "INSEE admin services index", None, "ADMIN_SERVICES", 0.00, False),
         ],
         benchmark_notes=_default_source_notes(),
     )
 
 
 def _plastics_profile() -> BusinessProfile:
-    annual_revenue = 1_200_000
+    annual_revenue = 1_600_000
     preset_key = "plastics_injection"
     return BusinessProfile(
         business_type="plasturgie",
@@ -302,14 +302,14 @@ def _construction_profile() -> BusinessProfile:
             RevenueStream("Maintenance contracts", 0.15),
         ],
         cost_lines=[
-            CostLine("Raw materials", "Cement and concrete inputs", 95, "t", 115, "Cement benchmark estimate", "Gas", None, 0.05),
-            CostLine("Raw materials", "Timber and panels", 38, timber.default_unit, timber.default_unit_price, timber.source, timber.underlying, timber.market_code, timber.volatility),
-            CostLine("Raw materials", "Carbon steel rebar, sheet and metalwork", 18000, steel.default_unit, steel.default_unit_price, steel.source, steel.underlying, steel.market_code, steel.volatility),
-            CostLine("Fuel and mobility", "Diesel for machinery and vehicles", 4200, diesel.default_unit, diesel.default_unit_price, diesel.source, diesel.underlying, diesel.market_code, diesel.volatility),
-            CostLine("Raw materials", "Copper electrical wiring", 480, copper.default_unit, copper.default_unit_price, copper.source, copper.underlying, copper.market_code, copper.volatility),
-            CostLine("Personnel", "Site payroll and charges", 1, "monthly package", 27500, "Construction payroll estimate", None, None, 0.00, False),
-            CostLine("Fixed costs", "Tools, equipment rental, depot", 1, "monthly package", 12500, "Contractor overhead estimate", None, None, 0.00, False),
-            CostLine("Fixed costs", "Insurance, admin, accounting", 1, "monthly package", 5200, "SMB overhead estimate", None, None, 0.00, False),
+            CostLine("Raw materials", "Cement and concrete inputs", 44, "t", 115, "INSEE construction materials cost index", "Construction materials", "CONSTRUCTION_COST", 0.05),
+            CostLine("Raw materials", "Timber and panels", 18, timber.default_unit, timber.default_unit_price, timber.source, timber.underlying, timber.market_code, timber.volatility),
+            CostLine("Raw materials", "Carbon steel rebar, sheet and metalwork", 8300, steel.default_unit, steel.default_unit_price, steel.source, steel.underlying, steel.market_code, steel.volatility),
+            CostLine("Fuel and mobility", "Diesel for machinery and vehicles", 1950, diesel.default_unit, diesel.default_unit_price, diesel.source, diesel.underlying, diesel.market_code, diesel.volatility),
+            CostLine("Raw materials", "Copper electrical wiring", 220, copper.default_unit, copper.default_unit_price, copper.source, copper.underlying, copper.market_code, copper.volatility),
+            CostLine("Personnel", "Site payroll and charges", 1, "monthly package", 27500, "INSEE construction labor-cost index", None, "LABOR_CONSTRUCTION", 0.00, False),
+            CostLine("Fixed costs", "Tools, equipment rental, depot", 1, "monthly package", 6300, "INSEE construction equipment rental index", None, "RENT_EQUIPMENT_CONSTRUCTION", 0.00, False),
+            CostLine("Fixed costs", "Insurance, admin, accounting", 1, "monthly package", 3550, "INSEE admin services index", None, "ADMIN_SERVICES", 0.00, False),
         ],
         benchmark_notes=_default_source_notes(),
     )
@@ -336,21 +336,21 @@ def _restaurant_profile() -> BusinessProfile:
             RevenueStream("Takeaway and catering", 0.06),
         ],
         cost_lines=[
-            CostLine("Raw materials", "Food purchases", 1, "monthly package", 12700, "Restaurant COGS estimate", None, None, 0.04),
-            CostLine("Raw materials", "Butter, cream and dairy fats", 320, "kg/L", 4.20, "Food wholesaler estimate", "Fats", None, 0.04),
+            CostLine("Raw materials", "Food purchases", 1, "monthly package", 10000, "INSEE food products producer-price index", None, "FOOD_PRODUCTS", 0.04),
+            CostLine("Raw materials", "Butter, cream and dairy fats", 320, "kg/L", 4.20, "INSEE dairy products for wholesalers/restaurants index", "Fats", "DAIRY_FATS", 0.04),
             CostLine("Raw materials", "Bread and flour-based inputs", 1, "monthly package", 2500, "Bakery supplier estimate", "Wheat", "WHEAT", 0.06),
             CostLine("Energy", "Cooking gas", 5200, "kWh", 0.105, "Natural gas proxy", "Gas", "NATURAL_GAS", 0.08),
-            CostLine("Energy", "Electricity for kitchen and refrigeration", 7600, "kWh", 0.17, "Electricity tariff proxy", "Electricity", None, 0.05),
-            CostLine("Personnel", "Kitchen and service payroll", 1, "monthly package", 14500, "Restaurant payroll estimate", None, None, 0.00, False),
-            CostLine("Fixed costs", "Rent", 1, "monthly package", 5200, "Commercial lease estimate", None, None, 0.00, False),
-            CostLine("Fixed costs", "Insurance, accounting, software", 1, "monthly package", 2400, "SMB overhead estimate", None, None, 0.00, False),
+            CostLine("Energy", "Electricity for kitchen and refrigeration", 7600, "kWh", 0.17, "ENTSO-E or INSEE electricity index", "Electricity", "ELECTRICITY", 0.05),
+            CostLine("Personnel", "Kitchen and service payroll", 1, "monthly package", 16000, "INSEE hospitality labor-cost index", None, "LABOR_HOSPITALITY", 0.00, False),
+            CostLine("Fixed costs", "Rent", 1, "monthly package", 5200, "INSEE commercial rent index", None, "RENT_COMMERCIAL", 0.00, False),
+            CostLine("Fixed costs", "Insurance, accounting, software", 1, "monthly package", 2400, "INSEE admin services index", None, "ADMIN_SERVICES", 0.00, False),
         ],
         benchmark_notes=_default_source_notes(),
     )
 
 
 def _metalwork_profile() -> BusinessProfile:
-    annual_revenue = 780_000
+    annual_revenue = 1_000_000
     preset_key = "metalwork"
     return BusinessProfile(
         business_type="metal workshop",
@@ -443,31 +443,35 @@ def _generic_profile(business_type: str, annual_revenue: float, rng: random.Rand
             )
         )
 
-    add_cost_from_revenue_share("Raw materials", "General purchased goods", 0.18, "unit basket", 100, "Generic SMB cost ratio")
-    add_cost_from_revenue_share("Energy", "Electricity", 0.035, "kWh", 0.17, "Electricity tariff proxy", "Electricity", None, 0.05)
-    add_cost_from_revenue_share("Personnel", "Payroll and charges", 0.24, "monthly package", annual_revenue * 0.24 / 12, "Generic payroll ratio", None, None, 0.00, False)
-    add_cost_from_revenue_share("Fixed costs", "Rent and facilities", 0.09, "monthly package", annual_revenue * 0.09 / 12, "Generic rent ratio", None, None, 0.00, False)
-    add_cost_from_revenue_share("Fixed costs", "Admin, insurance, accounting", 0.055, "monthly package", annual_revenue * 0.055 / 12, "Generic overhead ratio", None, None, 0.00, False)
+    add_cost_from_revenue_share("Raw materials", "General purchased goods", 0.18, "unit basket", 100, "INSEE food/products proxy", None, "FOOD_PRODUCTS")
+    add_cost_from_revenue_share("Energy", "Electricity", 0.035, "kWh", 0.17, "ENTSO-E or INSEE electricity index", "Electricity", "ELECTRICITY", 0.05)
+    add_cost_from_revenue_share("Personnel", "Payroll and charges", 0.24, "monthly package", annual_revenue * 0.24 / 12, "INSEE generic labor-cost index", None, "LABOR_GENERIC", 0.00, False)
+    add_cost_from_revenue_share("Fixed costs", "Rent and facilities", 0.09, "monthly package", annual_revenue * 0.09 / 12, "INSEE commercial rent index", None, "RENT_COMMERCIAL", 0.00, False)
+    add_cost_from_revenue_share("Fixed costs", "Admin, insurance, accounting", 0.055, "monthly package", annual_revenue * 0.055 / 12, "INSEE admin services index", None, "ADMIN_SERVICES", 0.00, False)
 
     if any(word in text for word in ["delivery", "fleet", "mobile", "chantier", "field"]):
-        add_cost_from_revenue_share("Fuel and mobility", "Fuel and logistics", 0.08, "L", 1.62, "Oil-linked fuel proxy", "Oil", "WTI", 0.08)
+        add_cost_from_revenue_share("Fuel and mobility", "Fuel and logistics", 0.08, "L", 1.62, "INSEE diesel/gazole price series", "Oil", "DIESEL", 0.08)
     if any(word in text for word in ["food", "aliment", "bak", "cafe", "restaurant"]):
         add_cost_from_revenue_share("Raw materials", "Flour or cereal inputs", 0.05, "kg", 0.56, "Wheat proxy", "Wheat", "WHEAT", 0.06)
-        add_cost_from_revenue_share("Raw materials", "Butter, cream or fats", 0.035, "kg/L", 4.50, "Fats proxy", "Fats", None, 0.04)
+        add_cost_from_revenue_share("Raw materials", "Butter, cream or fats", 0.035, "kg/L", 4.50, "INSEE dairy products index", "Fats", "DAIRY_FATS", 0.04)
     if any(word in text for word in ["factory", "atelier", "manufact", "industrial", "machine"]):
-        add_cost_from_revenue_share("Energy", "Industrial electricity", 0.06, "kWh", 0.16, "Electricity tariff proxy", "Electricity", None, 0.05)
+        add_cost_from_revenue_share("Energy", "Industrial electricity", 0.06, "kWh", 0.16, "ENTSO-E or INSEE electricity index", "Electricity", "ELECTRICITY", 0.05)
     if any(word in text for word in ["wood", "menuis", "furniture", "packaging"]):
-        add_cost_from_revenue_share("Raw materials", "Wood and timber", 0.09, "m3", 420, "Wood proxy", "Wood", None, 0.05)
+        add_cost_from_revenue_share("Raw materials", "Wood and timber", 0.09, "m3", 420, "INSEE lumber futures proxy", "Wood", "WOOD", 0.05)
     if any(word in text for word in ["cable", "electric", "metal", "hardware"]):
-        add_cost_from_revenue_share("Raw materials", "Copper inputs", 0.07, "kg", 8.20, "Copper proxy", "Copper", "COPPER", 0.08)
+        copper = material_lookup("copper")
+        add_cost_from_revenue_share("Raw materials", "Copper inputs", 0.07, copper.default_unit, copper.default_unit_price, copper.source, copper.underlying, copper.market_code, copper.volatility)
     if any(word in text for word in ["alu", "aluminium", "aluminum"]):
-        add_cost_from_revenue_share("Raw materials", "Aluminium inputs", 0.05, "kg", 2.60, "Aluminium proxy", "Aluminium", "ALUMINUM", 0.06)
+        aluminium = material_lookup("aluminium")
+        add_cost_from_revenue_share("Raw materials", "Aluminium inputs", 0.05, aluminium.default_unit, aluminium.default_unit_price, aluminium.source, aluminium.underlying, aluminium.market_code, aluminium.volatility)
     if any(word in text for word in ["zinc", "galvani"]):
-        add_cost_from_revenue_share("Raw materials", "Zinc inputs", 0.03, "kg", 4.50, "Zinc proxy", "Zinc", "ZINC", 0.09)
+        zinc = material_lookup("zinc")
+        add_cost_from_revenue_share("Raw materials", "Zinc inputs", 0.03, zinc.default_unit, zinc.default_unit_price, zinc.source, zinc.underlying, zinc.market_code, zinc.volatility)
     if any(word in text for word in ["acier", "steel", "chaudronnerie"]):
-        add_cost_from_revenue_share("Raw materials", "Steel inputs", 0.06, "kg", 1.20, "Steel rebar proxy", "Steel", "STEEL_REBAR", 0.07)
+        steel = material_lookup("carbon_steel")
+        add_cost_from_revenue_share("Raw materials", "Steel inputs", 0.06, steel.default_unit, steel.default_unit_price, steel.source, steel.underlying, steel.market_code, steel.volatility)
     if any(word in text for word in ["construction", "building", "cement", "btp"]):
-        add_cost_from_revenue_share("Raw materials", "Cement and mineral inputs", 0.08, "t", 115, "Gas-linked cement proxy", "Gas", None, 0.05)
+        add_cost_from_revenue_share("Raw materials", "Cement and mineral inputs", 0.08, "t", 115, "INSEE construction materials cost index", "Construction materials", "CONSTRUCTION_COST", 0.05)
 
     # Add one slight random perturbation so two vague businesses are not exact
     # clones while remaining deterministic under the provided seed.
@@ -499,9 +503,9 @@ def _default_source_notes() -> list[tuple[str, str, str, str]]:
     return [
         (
             "Commodity monthly history",
-            "World Bank Pink Sheet or Alpha Vantage when enabled",
-            "https://www.worldbank.org/en/research/commodity-markets",
-            "Official World Bank commodity-market page; monthly historical XLSX used as no-key source.",
+            "INSEE BDM, ENTSO-E, World Bank Pink Sheet or Alpha Vantage when enabled",
+            "https://bdm.insee.fr/series/sdmx/dataflow",
+            "Online mode uses curated INSEE IDBANK series first, then venue/API-specific market data and synthetic fallback only when unavailable.",
         ),
         (
             "French statistical series",
