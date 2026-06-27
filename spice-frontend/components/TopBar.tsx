@@ -18,15 +18,15 @@ export function TopBar({
   status: string; // e.g. "Agent online · Opus 4.8 · ready"
 }) {
   return (
-    <header className="flex h-[68px] items-center justify-between px-11">
+    <header className="flex h-[100px] shrink-0 items-center justify-between border-b border-hair2 px-11">
       <div className="flex items-center gap-[34px]">
         <div className="flex items-center gap-3">
-          <div className="flex h-[26px] w-[26px] items-center justify-center rounded-[7px] bg-green text-[14px] font-semibold text-paper">
+          <div className="flex h-[34px] w-[34px] items-center justify-center rounded-[9px] bg-green text-[18px] font-semibold text-paper">
             S
           </div>
-          <div className="hidden text-[15px] font-semibold tracking-tight sm:flex sm:items-baseline">
+          <div className="hidden text-[18px] font-semibold tracking-tight sm:flex sm:items-baseline">
             Spice
-            <span className="ml-3 text-[10.5px] font-normal uppercase tracking-label text-faint">
+            <span className="ml-3 text-[11px] font-normal uppercase tracking-label text-faint">
               The Exotic Asset Company
             </span>
           </div>

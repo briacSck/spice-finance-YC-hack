@@ -51,7 +51,7 @@ export const RECOMMENDATIONS = [
   },
   {
     venue: "Escrow · insurance",
-    venueColor: "#C97B5E",
+    venueColor: "var(--dim)",
     title: "Parametric energy policy",
     body: "Pays out automatically if the energy index crosses a trigger. 24/7, on-chain.",
     impact: "↳ covers the tail the options miss",

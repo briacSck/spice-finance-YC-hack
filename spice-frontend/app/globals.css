@@ -4,16 +4,16 @@
 
 /* DESIGN.md tokens also exposed as CSS vars (for arbitrary use / charts) */
 :root {
-  --paper: #f4f3ef;
+  --paper: #ffffff;
   --panel: #ffffff;
-  --hair: #eceae3;
-  --hair2: #f2f0ea;
-  --ink-deep: #13231d;
-  --ink: #1a1916;
-  --dim: #797469;
-  --faint: #aba59a;
+  --hair: #e6e6e6;
+  --hair2: #f0f0f0;
+  --ink-deep: #141414;
+  --ink: #111111;
+  --dim: #6b6b6b;
+  --faint: #9a9a9a;
   --green: #1b5e4c;
-  --terra: #a85436;
+  --terra: #d33a2c;
 }
 
 html,
@@ -34,9 +34,9 @@ body {
   .label {
     @apply text-[10.5px] font-medium uppercase tracking-label text-faint;
   }
-  /* the borderless floating card — DESIGN.md core component */
+  /* the floating card — white on white, defined by a hairline + soft shadow */
   .card {
-    @apply rounded-[18px] bg-panel shadow-card;
+    @apply rounded-[18px] border border-hair bg-panel shadow-card;
   }
   .btn-primary {
     @apply w-full rounded-[13px] bg-green px-4 py-4 text-center text-[14.5px] font-semibold text-paper transition-opacity hover:opacity-90;
