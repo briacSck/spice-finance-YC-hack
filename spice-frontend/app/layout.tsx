@@ -4,6 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Spice — autonomous hedging desk",
   description: "The Exotic Asset Company",
+  icons: { icon: "/pepperLogo.png" },
 };
 
 export default function RootLayout({
