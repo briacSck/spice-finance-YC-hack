@@ -56,7 +56,7 @@ been historically (the coefficient of variation, standard deviation over mean). 
 them into a 0-100 risk score and ranks the commodities by it.
 
 ```mermaid
-flowchart TB
+flowchart LR
     BOOKS(["Company books<br/>monthly cost per supplier"])
     BOOKS --> EXPO["Exposure map<br/>each commodity as a share of total expenses"]
     EXPO --> SH["Spend weight<br/>share of total expenses"]
@@ -75,7 +75,7 @@ being hedged, plus a plain justification drawn from the historical price risk. N
 executes until the owner approves each one.
 
 ```mermaid
-flowchart TB
+flowchart LR
     RANK(["Ranked commodities by score"])
     RANK --> SEL{"Score above threshold?"}
     SEL -->|"no"| SKIP["Leave unhedged"]
@@ -90,6 +90,41 @@ Example proposal the agent can make: the bakery already buys all of its wheat at
 plans to buy about 50% more next year. Locking today's price with a call now caps the
 damage if wheat spikes before those purchases, for a premium worth a few percent of the
 volume covered.
+
+## The other two legs
+
+Options cover the price risk. Two more venues cover what they can't.
+
+### Idle cash, parked in Morpho
+
+Spice sweeps cash above the operating buffer into a Morpho ERC-4626 vault, where it earns
+yield and helps self-fund the hedge premiums. The position is recallable at any time, so
+the money comes back the moment the company needs it.
+
+```mermaid
+flowchart LR
+    CASH(["Idle cash above buffer"]) --> DEP["Supply to Morpho vault"]
+    DEP --> EARN["Earns vault APY<br/>self-funds premiums"]
+    EARN --> NEED{"Cash needed?"}
+    NEED -->|"no"| EARN
+    NEED -->|"yes"| WD["Withdraw, recall to wallet"]
+    WD --> CASH
+```
+
+### The heatwave tail, parametric insurance
+
+Some risk has no tradeable price. A heatwave that empties the shop and breaks the
+refrigeration is one. Spice covers it with a parametric policy: a fixed payout fires the
+instant a heat-index oracle crosses the trigger, with no claim and no adjuster.
+
+```mermaid
+flowchart LR
+    PREM(["Premium"]) --> POL["Take policy<br/>trigger = heat index"]
+    POL --> WATCH["Watch the oracle"]
+    WATCH --> CHK{"Index over trigger?"}
+    CHK -->|"no"| WATCH
+    CHK -->|"yes"| PAY["Instant payout on-chain"]
+```
 
 ## Repo
 
