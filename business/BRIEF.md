@@ -68,4 +68,4 @@ Per-business, Spice is a useful hedging tool. **At scale, it becomes something n
 - **Name:** **Spice** (full brand "The Exotic Asset Company"). Tagline candidate: *"the spice must flow"* (≈ commodities/cash must keep moving). Lock before logo/UI.
 - **Hero demo business:** bakery (most relatable, exposed to wheat + gas + power + fats) vs trucking (clean single oil exposure). Recommendation: **bakery** for the contrast, mention trucking + a plastics shop for breadth.
 
-See `COMPETITION.md` for whitespace and `DEMO.md` for the architecture, hero demo, and 48h build plan.
+See `COMPETITION.md` for whitespace, `UNIT_ECONOMICS.md` for the per-client revenue model + GTM revenue ramp, and `../docs/DEMO.md` for the architecture, hero demo, and 48h build plan.
