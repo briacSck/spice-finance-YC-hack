@@ -50,7 +50,7 @@ export const RECOMMENDATIONS = [
     impact: "↳ neutralises ~80% of the input shock",
   },
   {
-    venue: "Escrow · insurance",
+    venue: "Insurance · parametric",
     venueColor: "var(--dim)",
     title: "Parametric energy policy",
     body: "Pays out automatically if the energy index crosses a trigger. 24/7, on-chain.",
@@ -75,7 +75,7 @@ export const RESULT = {
 // Venue execution rows (Execution screen agent lanes).
 export const HEDGING_VENUES = [
   { n: "Alpaca · options", s: "WEAT / UNG calls", status: "queued" as const, label: "order queued", ref: "id 6f2a…b1", amount: "€3,900", pos: false },
-  { n: "Escrow · insurance", s: "energy parametric", status: "settled" as const, label: "payout settled", ref: "0x9c…4e", explorer: true, amount: "+€84,000", pos: true },
+  { n: "Insurance · parametric", s: "energy parametric", status: "settled" as const, label: "payout settled", ref: "0x9c…4e", explorer: true, amount: "+€84,000", pos: true },
 ];
 export const PLACEMENT_VENUES = [
   { n: "Morpho · yield", s: "recallable supply", status: "settled" as const, label: "supplied · recalled", ref: "0x21…af", explorer: true, amount: "€180,000", pos: false },
@@ -87,8 +87,8 @@ export const SCRIPTED_FEED: Omit<FeedItem, "id">[] = [
   { kind: "message", who: "Orchestrator", text: "Margin holds only if I cap wheat & gas and cover the energy tail. Routing to both specialists.", time: "12:04:01" },
   { kind: "tool", who: "Hedging agent", text: "hedge_options(WEAT, calls, Δ≈0.4)", time: "12:04:03" },
   { kind: "exec", who: "Alpaca", text: "Resolved OCC contract · paper order queued, fills Monday.", time: "12:04:05" },
-  { kind: "exec", who: "Escrow · testnet", text: "Policy minted. Premium €1,240 paid. Watching the energy oracle.", time: "12:04:11" },
+  { kind: "exec", who: "Insurance · testnet", text: "Policy minted. Premium €1,240 paid. Watching the energy oracle.", time: "12:04:11" },
   { kind: "exec", who: "Morpho · testnet", text: "€180k idle cash supplied, earning yield to self-fund premiums.", time: "12:04:16" },
   { kind: "trigger", who: "Scenario · trigger", text: "Energy index +27% — crossed. Firing payout + cash recall.", time: "12:05:00" },
-  { kind: "exec", who: "Escrow → paid", text: "Parametric payout settled to the bakery wallet. Morpho position recalled.", time: "12:05:02" },
+  { kind: "exec", who: "Insurance → paid", text: "Parametric payout settled to the bakery wallet. Morpho position recalled.", time: "12:05:02" },
 ];
