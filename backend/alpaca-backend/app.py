@@ -35,7 +35,7 @@ app = FastAPI(title="YIELD IBKR backend", version="0.1.0", lifespan=lifespan)
 
 # --- request models ----------------------------------------------------------
 class InferRequest(BaseModel):
-    line_items: list[str] = Field(..., description="invoice / AP line-item texts")
+    line_items: list[str] = Field(..., description="bank statement / AP line-item texts")
 
 
 class FutureHedge(BaseModel):

@@ -1,8 +1,8 @@
-# YIELD — Competitive Whitespace Map
+# SPICE — Competitive Whitespace Map
 
 *Validated against fresh 2026 research, EU incumbents included.*
 
-**Thesis:** the space is crowded *at the edges* and empty *at the center*. Every incumbent is structurally **one step** from us — none has taken it. The center is: **turnkey AI CFO for mass-market EU SMBs + real forecasting depth + closed-loop onchain execution.**
+**Thesis:** everyone can hedge a commodity *once you tell them what you're exposed to*. Nobody tells an ordinary SMB what they're exposed to. The exposure-**discovery** step — reading raw accounting data and surfacing the hidden commodity risk inside it — is the empty center. The center is: **automatic, explainable commodity-exposure discovery from ordinary books, for non-finance SMBs.**
 
 ---
 
@@ -10,66 +10,67 @@
 
 | Player | What they do | What they **don't / can't** do |
 |---|---|---|
-| **Agicap** (FR, 7,000+ clients — the one the jury knows) | Cash-flow mgmt, forecasting, collection (CashCollect), supplier payments | Read-only/advisory; no autonomous decisions; **idle cash sits at 0%**; no yield; no onchain; no credit |
-| **Pennylane** (FR) | AI-assisted accounting / ledger | Bookkeeping, not treasury; advises, doesn't act; no yield/onchain |
-| **Qonto / Spendesk / Memo Bank** | SMB banking, spend, cards | Bank rails (slow, no programmable yield/credit logic); not an autonomous CFO |
-| **Nilus / ChatFin / Trovata** (US) | Agentic cash forecasting, governance-first | Enterprise/mid-market, US; **advisory, not executing**; not onchain; not turnkey-SMB |
-| **Defacto / Silvr** (FR) | Embedded SMB credit | Single product (lending); no forecasting/treasury loop; not a CFO brain |
-| **Palus / Vesto / Mercury / Brex / Stripe yield** | Stablecoin/RWA yield on idle cash | **Passive yield product** — a dumb pipe; no intelligence deciding *when/how much*; no forecasting; no SMB-EU focus |
-| **YC W26/S26 AI-accounting agents** | Invoice capture, reconciliation, tax, "CFO insights" | Bookkeeping automation; **no treasury execution, no money movement, no onchain** |
+| **Pillar** (FR) | Hedging optimization platform | **Assumes the customer already knows their exposures** and is fluent with instruments; large-corporate focus; no discovery from raw books |
+| **Agicap** (FR, 7,000+ clients — the one the jury knows) | Cash-flow mgmt, forecasting, collection | Shows cost *categories*, never **maps them to commodity underlyings**; no shock/stress test; no hedge priority; read-only advisory |
+| **Pennylane / commodity-aware ERPs** (FR) | AI-assisted accounting / ledger | Records the flour invoice; never tells you flour = **wheat exposure**; no risk lens at all |
+| **Commodity risk advisories** (Vialto, INTL FCStone, bank trade desks) | Bespoke exposure audits + hedging programs | Manual, consultant-priced, **enterprise-only**; weeks of work; not turnkey; not for a €2M-revenue bakery |
+| **Procurement/spend-analytics tools** (Spendesk, Coupa) | Categorize and visualize spend | Map spend by *vendor/category*, not by **underlying commodity**; no price-sensitivity model; no margin stress |
+| **Bloomberg / Refinitiv / commodity terminals** | Commodity prices, vol, curves | Give you the *price of wheat* — but never connect it to **your** flour line; you must already be a trader |
+| **YC W26/S26 AI-accounting agents** | Invoice capture, reconciliation, "CFO insights" | Bookkeeping automation; **no commodity mapping, no exposure model, no stress test** |
 
 ---
 
 ## Capability matrix
 
-| Capability | Agicap | Nilus / ChatFin | Palus / Stripe yield | YC AI-accountants | **YIELD** |
+| Capability | Pillar | Agicap | Risk advisories | Spend analytics | **Spice** |
 |---|:--:|:--:|:--:|:--:|:--:|
-| Turnkey for a non-finance SMB (5-min setup) | ◐ | ✗ | ◐ | ◐ | ✅ |
-| Real forecasting depth (13-wk + behavior) | ✅ | ✅ | ✗ | ◐ | ✅ |
-| **Autonomously *executes* money decisions** | ✗ | ✗ | ◐ | ✗ | ✅ |
-| Idle-cash → yield, intelligently sized | ✗ | ✗ | ◐ | ✗ | ✅ |
-| Onchain / stablecoin settlement | ✗ | ✗ | ✅ | ✗ | ✅ |
-| **Closed loop: decision → action → settlement** | ✗ | ✗ | ✗ | ✗ | ✅ |
-| EU / France-first | ✅ | ✗ | ✗ | ◐ | ✅ |
+| Works from a raw Excel/accounting export (no setup) | ✗ | ◐ | ✗ | ◐ | ✅ |
+| **Discovers** which commodities you're exposed to | ✗ | ✗ | ◐ | ✗ | ✅ |
+| Maps expense lines → underlyings, line-by-line | ✗ | ✗ | ◐ | ✗ | ✅ |
+| Material-level granularity (steel ≠ aluminium ≠ copper) | ◐ | ✗ | ◐ | ✗ | ✅ |
+| Margin stress test under +10/20/30% shocks | ◐ | ✗ | ✅ | ✗ | ✅ |
+| Explainable + cited to the source row | ✗ | ◐ | ◐ | ◐ | ✅ |
+| Turnkey for a non-finance SMB | ✗ | ◐ | ✗ | ◐ | ✅ |
+| EU / France-first (Insee-grounded shocks) | ✗ | ✅ | ◐ | ◐ | ✅ |
 
 Legend: ✅ yes · ◐ partial · ✗ no
 
 ---
 
-## The frontier Stripe and Circle opened but didn't finish
+## The frontier the hedging world opened but didn't finish
 
 | Player | Cracked | Did NOT crack |
 |---|---|---|
-| **Stripe / Bridge.xyz** | Stablecoin payments + fiat on/off-ramp | The **real-world risk layer** — using the rails to hedge/insure/finance a real business |
-| **Circle / USDC** | The dollar rail itself | Anything an SMB *does* with it beyond holding/paying |
-| **Hyperliquid / Aave / Polymarket** | Programmable derivatives, lending, event markets | A brain that maps an ordinary business's risk onto them |
+| **Pillar / corporate hedge desks** | Optimizing a hedge *once exposures are known* | **Finding the exposures** in an ordinary business's books |
+| **Bloomberg / Refinitiv** | The commodity price layer itself | Connecting that price to *your* flour, *your* diesel, *your* steel |
+| **Agicap / accounting AIs** | Reading the books cleanly | Reading **risk** out of the books — the commodity hiding behind every cost line |
 
-The payments layer is solved. **The layer that lets a bakery actually hedge its wheat-and-gas exposure on those rails does not exist.** That is the frontier: the real-world risk layer on top of rails that exist but are payments-only today.
+The instrument layer is solved. **The layer that reads an ordinary bakery's books and says "you have €420k of wheat exposure threatening 3.6 margin points" does not exist.** That is the frontier: exposure discovery as the missing first step before anyone can hedge.
 
 ## The killer line for the jury
 
-> *"Stripe and Circle made dollars programmable. We make the real economy programmable — we find the commodity risk hiding in an ordinary business's books and hedge it on rails that were payments-only until now. Agicap shows a bakery a dashboard; Spice turns it into a trading desk."*
+> *"Pillar optimizes a hedge once you know your exposure. Bloomberg gives you the price of wheat. Nobody tells the bakery that its flour line *is* wheat. Spice reads ordinary books and turns invisible commodity risk into a ranked, cited hedge list — the step that has to happen before any hedge can exist."*
 
 ---
 
 ## Why no one has done it (the structural answer)
 
-- **The advisory crowd (Agicap, Nilus, ChatFin)** sits on bank rails that can't execute autonomously, so they're *forced* to stop at advice.
-- **The yield/stablecoin crowd (Palus, Stripe yield)** has the rail but no brain — they're a passive pipe with no forecasting and no decision logic.
-- **The AI-accounting crowd (YC batches)** automates bookkeeping, not treasury — they never touch the money.
+- **The hedging crowd (Pillar, bank desks)** starts the conversation *after* exposures are known — they're built for customers who already speak the language, so they *skip* discovery entirely.
+- **The accounting crowd (Agicap, Pennylane, YC AIs)** reads the books for bookkeeping, not for risk — a flour invoice is a cost category to them, never a wheat position.
+- **The data crowd (Bloomberg, Refinitiv)** sells the price of the underlying but never the bridge from that underlying to *your* specific cost line.
 
-YIELD is the only player combining the **brain** (forecasting depth) + the **rail** (programmable onchain execution) + the **turnkey EU-SMB wedge**. That intersection is the empty center of the map.
-
----
-
-## Defensibility — the data moat central banks can't build
-
-Per-business, Spice is a hedging tool. At scale it becomes irreplaceable:
-
-- **Cash pooling** — pooled SMB liquidity gets hedge pricing and execution no single small business could.
-- **Data pooling** — Spice sees the real cost structures, margins, and commodity exposures of millions of ordinary businesses, **in real time, at the micro level**: a live, ground-truth picture of the real economy.
-- **The endgame** — that dataset is worth more to **hedge funds and central banks** than the SaaS ever will be. They forecast the real economy from lagging surveys; Spice has the micro-level, real-time truth they structurally cannot get. Sell hedging to SMBs; sell the real economy's nervous system to the people who move markets.
+Spice is the only player that does the unglamorous bridge: **raw books → commodity underlyings → margin sensitivity → ranked hedge priority**, explainable and cited. That bridge is the empty center of the map — and it's the mandatory on-ramp to everything Spice does next.
 
 ---
 
-*Sources behind the 2026 figures: YC Spring 2026 RFS (Stablecoin Financial Services) + USDC funding option; tokenized MMF growth to $7B+ (Apr 2026); agentic 13-week forecast accuracy 88–92% and 52% treasurer AI adoption (2026 treasury surveys); Agicap 7,000+ clients across 12+ countries.*
+## Defensibility — the mapping moat
+
+Per-business, the agent is an exposure report. At scale it becomes irreplaceable:
+
+- **Mapping corpus** — every accounting label resolved to an underlying (and every correction the business owner makes) trains a mapping layer no competitor can match: the dictionary from messy real-world cost lines to commodity exposures.
+- **Sensitivity priors** — across millions of SMBs, Spice learns how each business input's price actually tracks its underlying — real elasticities, not textbook assumptions.
+- **The endgame** — exposure discovery is the wedge that makes Spice the default first step. Once Spice has mapped a business's risk, it owns the natural next action: hedging it. Discovery feeds execution; execution feeds [the data moat](COMPETITION.md).
+
+---
+
+*Sources behind the 2026 figures: YC Spring 2026 RFS; Insee commodity & producer-price series (used for historical shock calibration); Agicap 7,000+ clients across 12+ countries; Pillar positioning (corporate hedging optimization, exposures-assumed). See [COMPETITION.md](COMPETITION.md) for the broader YIELD/Spice competitive map.*

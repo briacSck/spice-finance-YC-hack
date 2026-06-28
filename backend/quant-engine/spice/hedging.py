@@ -21,6 +21,7 @@ hard-failing, exactly like the existing agent tools.
 
 from __future__ import annotations
 
+import asyncio
 import os
 import statistics
 import uuid
@@ -221,35 +222,40 @@ def _month_label(month_index: int) -> str:
     return f"{year:04d}-{month:02d}"
 
 
-async def size_and_resolve_rung(ticker: str, monthly_notional: float, target_month: str) -> LadderRung:
-    """Resolve a strike via Alpaca's option chain, size a quantity off
-    notional/strike (not premium - per spec), and place a market-order call buy.
-    Degrades to a fabricated ref if the chain can't be resolved."""
-    target_date = f"{target_month}-01"
+CHAIN_TIMEOUT = 1.5   # one fast probe; if it fails we degrade the whole ladder at once
+
+
+async def _resolve_strike(ticker: str, target_date: str) -> float | None:
+    """One option-chain probe for the ticker. Returns a mid strike, or None if the
+    venue is down/unreachable/empty. Resolving ONCE (not per rung) is what keeps a
+    12-rung build from becoming 12 sequential 4s timeouts when Alpaca is offline."""
     try:
-        async with httpx.AsyncClient(timeout=4.0) as c:
+        async with httpx.AsyncClient(timeout=CHAIN_TIMEOUT) as c:
             r = await c.get(f"{ALPACA}/chain/{ticker}", params={"right": "C", "expiration_date_gte": target_date})
             r.raise_for_status()
             chain = r.json()
-        contracts = chain.get("option_contracts", [])
-        strikes = sorted({float(ct["strike_price"]) for ct in contracts if ct.get("tradable", True)})
-        if not strikes:
-            raise ValueError("no tradable strikes in chain")
-        strike = strikes[len(strikes) // 2]
+        strikes = sorted({float(ct["strike_price"]) for ct in chain.get("option_contracts", []) if ct.get("tradable", True)})
+        return strikes[len(strikes) // 2] if strikes else None
     except Exception:
-        # chain unresolved: stand-in strike, skip the order call entirely
-        strike = max(1.0, monthly_notional / (100 * 10))
-        quantity = max(1, round(monthly_notional / (strike * 100)))
-        return LadderRung(
-            month_index=0,  # filled in by caller
-            target_month=target_month,
-            contract_symbol=None,
-            quantity=quantity,
-            strike=round(strike, 2),
-            status="degraded",
-            order_ref=f"sim-{ticker}-{target_month}",
-        )
+        return None
 
+
+def _degraded_rung(ticker: str, monthly_notional: float, target_month: str, strike: float | None = None) -> LadderRung:
+    s = strike if strike is not None else max(1.0, monthly_notional / (100 * 10))
+    return LadderRung(
+        month_index=0,  # filled in by caller
+        target_month=target_month,
+        contract_symbol=None,
+        quantity=max(1, round(monthly_notional / (s * 100))),
+        strike=round(s, 2),
+        status="degraded",
+        order_ref=f"sim-{ticker}-{target_month}",
+    )
+
+
+async def _place_rung(ticker: str, monthly_notional: float, target_month: str, strike: float) -> LadderRung:
+    """Place one market call buy at an already-resolved strike. Degrades on failure."""
+    target_date = f"{target_month}-01"
     quantity = max(1, round(monthly_notional / (strike * 100)))
     res = await _post(
         ALPACA,
@@ -268,23 +274,23 @@ async def size_and_resolve_rung(ticker: str, monthly_notional: float, target_mon
             status="bought",
             order_ref=str(order_ref),
         )
-    return LadderRung(
-        month_index=0,
-        target_month=target_month,
-        contract_symbol=None,
-        quantity=quantity,
-        strike=round(strike, 2),
-        status="degraded",
-        order_ref=f"sim-{ticker}-{target_month}",
-    )
+    return _degraded_rung(ticker, monthly_notional, target_month, strike)
 
 
 async def build_ladder(program: Program, ticker: str) -> HedgeLadder:
     proposal = program.proposals[ticker]
     ladder = HedgeLadder(ticker=ticker, underlying=proposal.underlying, built_at_month_index=program.current_month_index)
-    for month_index in range(1, COVERAGE_MONTHS + 1):
-        target_month = _month_label(program.current_month_index + month_index)
-        rung = await size_and_resolve_rung(ticker, proposal.monthly_notional, target_month)
+    months = [_month_label(program.current_month_index + i) for i in range(1, COVERAGE_MONTHS + 1)]
+    # Single chain probe (circuit breaker): venue down -> 12 degraded rungs instantly,
+    # no order calls. Venue up -> place the 12 orders concurrently, not serially.
+    strike = await _resolve_strike(ticker, f"{months[0]}-01")
+    if strike is None:
+        rungs = [_degraded_rung(ticker, proposal.monthly_notional, m) for m in months]
+    else:
+        rungs = list(await asyncio.gather(
+            *(_place_rung(ticker, proposal.monthly_notional, m, strike) for m in months)
+        ))
+    for month_index, rung in enumerate(rungs, start=1):
         rung.month_index = month_index
         ladder.rungs.append(rung)
     program.ladders[ticker] = ladder
@@ -327,7 +333,11 @@ async def roll_ladder(program: Program, ladder: HedgeLadder) -> LadderRung:
     proposal = program.proposals[ladder.ticker]
     new_month_index = program.current_month_index + COVERAGE_MONTHS
     target_month = _month_label(new_month_index)
-    rung = await size_and_resolve_rung(ladder.ticker, proposal.monthly_notional, target_month)
+    strike = await _resolve_strike(ladder.ticker, f"{target_month}-01")
+    if strike is None:
+        rung = _degraded_rung(ladder.ticker, proposal.monthly_notional, target_month)
+    else:
+        rung = await _place_rung(ladder.ticker, proposal.monthly_notional, target_month, strike)
     rung.month_index = new_month_index
     ladder.rungs.append(rung)
     return rung

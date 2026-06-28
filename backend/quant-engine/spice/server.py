@@ -174,8 +174,16 @@ async def api_program_approve(program_id: str, ticker: str) -> dict:
     proposal = program.proposals.get(ticker)
     if proposal is None:
         raise HTTPException(status_code=404, detail="unknown ticker")
-    if proposal.status != "pending":
-        raise HTTPException(status_code=400, detail=f"proposal already {proposal.status}")
+    if proposal.status == "rejected":
+        raise HTTPException(status_code=400, detail="proposal already rejected")
+    # Idempotent: a second approve (double-click / React re-fire) returns what was already
+    # built instead of a 400, so the UI never surfaces a spurious error.
+    if proposal.status == "approved":
+        if proposal.kind == "escrow":
+            existing = next((p for p in program.escrow_policies if p.get("ticker") == ticker), None)
+            return existing or {"ticker": ticker, "status": "approved"}
+        existing = program.ladders.get(ticker)
+        return asdict(existing) if existing else {"ticker": ticker, "status": "approved"}
     proposal.status = "approved"
     # Escrow proposals mint a single parametric policy; option proposals build a ladder.
     if proposal.kind == "escrow":
