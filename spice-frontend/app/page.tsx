@@ -53,13 +53,16 @@ export default function Page() {
 
   return (
     // Full-viewport canvas; the fixed stage is scaled to fit and centered.
-    <main className="flex min-h-screen items-center justify-center overflow-hidden bg-paper">
+    // overflow-auto + m-auto: fits the screen with no scroll when it can, but if
+    // the scaled stage is taller than the viewport on a given machine, the page
+    // scrolls instead of clipping — the bottom is always reachable.
+    <main className="flex min-h-screen overflow-auto bg-paper">
       <div
-        className="transition-opacity duration-200"
+        className="m-auto transition-opacity duration-200"
         style={{ width: STAGE_W * scale, height: STAGE_H * scale, opacity: ready ? 1 : 0 }}
       >
         <div
-          className="flex flex-col overflow-hidden"
+          className="flex flex-col"
           style={{ width: STAGE_W, height: STAGE_H, transform: `scale(${scale})`, transformOrigin: "top left" }}
         >
           <TopBar active={tab} onTab={go} status={STATUS[tab]} />

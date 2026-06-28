@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none" role="img" aria-label="Spice">
+  <rect width="32" height="32" rx="9" fill="#1B5E4C"/>
+  <g fill="#FFFFFF">
+    <path d="M16 5C18.4 10.8 18.4 21.2 16 27C13.6 21.2 13.6 10.8 16 5Z"/>
+    <path d="M5 16C10.8 13.6 21.2 13.6 27 16C21.2 18.4 10.8 18.4 5 16Z"/>
+  </g>
+</svg>

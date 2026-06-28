@@ -27,7 +27,7 @@ export function Dashboard({ onRun }: { onRun: () => void }) {
         </div>
         <div className="flex items-center gap-[11px] text-[13.5px] font-medium text-terra">
           <span className="h-[7px] w-[7px] rounded-full bg-terra" />
-          Unhedged commodity book detected
+          Unhedged · €541k of inputs exposed
         </div>
       </div>
 
@@ -50,7 +50,7 @@ export function Dashboard({ onRun }: { onRun: () => void }) {
       </div>
 
       {/* lower */}
-      <div className="grid flex-1 grid-cols-[1.6fr_1fr] gap-[30px] pb-[34px]">
+      <div className="grid flex-1 grid-cols-[1.6fr_1fr] gap-[30px] pb-14">
         {/* commodity book */}
         <div className="card flex flex-col px-8 py-7">
           <h2 className="text-[15px] font-semibold tracking-tight">The commodity book inside the bakery</h2>
@@ -81,7 +81,7 @@ export function Dashboard({ onRun }: { onRun: () => void }) {
         {/* agent status */}
         <div className="card flex flex-col px-8 py-7">
           <h2 className="text-[15px] font-semibold tracking-tight">Agent status</h2>
-          <div className="mb-4 mt-1 text-[12.5px] text-faint">Autonomous, end to end</div>
+          <div className="mb-4 mt-1 text-[12.5px] text-faint">From the books to the hedge, no CFO in the loop</div>
           <div className="flex flex-col">
             {STATUS_ROWS.map((r) => (
               <div key={r.t} className="flex items-center gap-[14px] border-b border-hair2 py-4 last:border-0">

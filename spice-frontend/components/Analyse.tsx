@@ -30,7 +30,7 @@ export function Analyse({ onExecute, run }: { onExecute: () => void; run: boolea
         <div className="font-mono text-[12.5px] text-faint">{ANALYSIS.scenario}</div>
       </div>
 
-      <div className="grid flex-1 grid-cols-[300px_1fr_400px] gap-[30px] px-11 pb-9">
+      <div className="grid flex-1 grid-cols-[300px_1fr_400px] gap-[30px] px-11 pb-14">
         {/* exposure donut */}
         <div className="card flex flex-col items-center px-8 py-[30px]">
           <div className="label self-start">Commodity book</div>

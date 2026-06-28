@@ -57,7 +57,7 @@ export const RECOMMENDATIONS = [
     impact: "↳ covers the tail the options miss",
   },
   {
-    venue: "Aave · yield",
+    venue: "Morpho · yield",
     venueColor: "#5C7A6E",
     title: "Fund it from idle cash",
     body: "Sweep €180k idle into yield to pay the premiums. Recallable on trigger.",
@@ -78,7 +78,7 @@ export const HEDGING_VENUES = [
   { n: "Escrow · insurance", s: "energy parametric", status: "settled" as const, label: "payout settled", ref: "0x9c…4e", explorer: true, amount: "+€84,000", pos: true },
 ];
 export const PLACEMENT_VENUES = [
-  { n: "Aave · yield", s: "recallable supply", status: "settled" as const, label: "supplied · recalled", ref: "0x21…af", explorer: true, amount: "€180,000", pos: false },
+  { n: "Morpho · yield", s: "recallable supply", status: "settled" as const, label: "supplied · recalled", ref: "0x21…af", explorer: true, amount: "€180,000", pos: false },
 ];
 
 // Scripted activity feed — the mock=true deterministic stream (DR4).
@@ -88,7 +88,7 @@ export const SCRIPTED_FEED: Omit<FeedItem, "id">[] = [
   { kind: "tool", who: "Hedging agent", text: "hedge_options(WEAT, calls, Δ≈0.4)", time: "12:04:03" },
   { kind: "exec", who: "Alpaca", text: "Resolved OCC contract · paper order queued, fills Monday.", time: "12:04:05" },
   { kind: "exec", who: "Escrow · testnet", text: "Policy minted. Premium €1,240 paid. Watching the energy oracle.", time: "12:04:11" },
-  { kind: "exec", who: "Aave · testnet", text: "€180k idle cash supplied, earning yield to self-fund premiums.", time: "12:04:16" },
+  { kind: "exec", who: "Morpho · testnet", text: "€180k idle cash supplied, earning yield to self-fund premiums.", time: "12:04:16" },
   { kind: "trigger", who: "Scenario · trigger", text: "Energy index +27% — crossed. Firing payout + cash recall.", time: "12:05:00" },
-  { kind: "exec", who: "Escrow → paid", text: "Parametric payout settled to the bakery wallet. Aave position recalled.", time: "12:05:02" },
+  { kind: "exec", who: "Escrow → paid", text: "Parametric payout settled to the bakery wallet. Morpho position recalled.", time: "12:05:02" },
 ];

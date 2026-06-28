@@ -44,7 +44,7 @@ export interface AnalysisEvent {
 }
 export interface ExecutionEvent {
   type: "execution";
-  venue: "alpaca" | "aave" | "escrow";
+  venue: "alpaca" | "morpho" | "escrow";
   action: string;
   status: "accepted" | "settled";
   ref: string; // order id / tx hash
