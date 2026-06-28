@@ -86,6 +86,18 @@ export interface HedgeProposal {
   explanation: string;
   score: number;
   status: "pending" | "approved" | "rejected";
+  kind?: "option" | "escrow"; // escrow = parametric heatwave policy (minted, not laddered)
+}
+
+export interface EscrowPolicy {
+  ticker: string;
+  underlying: string;
+  premium_usdc: number;
+  payout_usdc: number;
+  trigger_index: number;
+  policy_id: number | null;
+  ref: string;
+  status: "minted" | "degraded";
 }
 
 export interface LadderRung {
@@ -120,4 +132,5 @@ export interface ProgramState {
   ladders: Record<string, HedgeLadder>;
   monthly_excess_cash: number;
   sweep_log: SweepLogEntry[];
+  escrow_policies: EscrowPolicy[];
 }

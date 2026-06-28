@@ -53,12 +53,13 @@ TOOLS = [
     },
     {
         "name": "take_escrow_policy",
-        "description": "Take a parametric insurance policy that pays out on-chain if an energy index crosses a trigger.",
+        "description": "Take a parametric insurance policy that pays out on-chain if the regional heat index crosses a trigger (heatwave tail the options can't touch).",
         "input_schema": {
             "type": "object",
             "properties": {
                 "premium_usdc": {"type": "number"},
                 "payout_usdc": {"type": "number"},
+                "trigger_index": {"type": "integer", "description": "heat-index threshold (°C) that fires the payout"},
             },
             "required": ["premium_usdc", "payout_usdc"],
         },
@@ -124,9 +125,12 @@ async def dispatch(name: str, inp: dict, emit) -> dict:
     if name == "take_escrow_policy":
         prem = inp.get("premium_usdc", 1240)
         pay = inp.get("payout_usdc", 84000)
-        res = await _post(ESCROW, "/policy", {"premium_usdc": prem, "payout_usdc": pay})
+        trig = inp.get("trigger_index", 38)
+        # trigger_index is REQUIRED by the escrow backend's /policy contract; omitting
+        # it 422s and silently degrades to a fabricated ref.
+        res = await _post(ESCROW, "/policy", {"premium_usdc": prem, "trigger_index": trig, "payout_usdc": pay})
         ref = (res or {}).get("tx_hash") or "0x9c…4e"
-        await emit({"type": "execution", "venue": "escrow", "action": "Parametric energy policy minted",
+        await emit({"type": "execution", "venue": "escrow", "action": "Parametric heatwave policy minted",
                     "status": "accepted", "ref": str(ref), "explorer_url": "#", "amount": prem})
         return {"venue": "escrow", "status": "accepted", "ref": str(ref)}
 

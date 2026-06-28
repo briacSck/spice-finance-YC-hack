@@ -34,9 +34,17 @@ from . import commodities, quant
 from . import exposure as exposure_mod
 from .company_view import DATA as HERO_DATA
 from .schema import load_company
-from .tools import ALPACA, MORPHO, _post
+from .tools import ALPACA, ESCROW, MORPHO, _post
 
 COVERAGE_MONTHS = 12
+
+# Parametric heatwave tail — the leg the option ladder can't cover (lost footfall +
+# broken refrigeration are not a tradeable price). One program-level policy, sized to
+# the demo narrative and kept consistent with scenario.py / agent.py.
+ESCROW_TICKER = "HEAT"
+ESCROW_PREMIUM_USDC = 1240.0
+ESCROW_PAYOUT_USDC = 84000.0
+ESCROW_TRIGGER_INDEX = 38      # heat-index threshold (°C); the demo settles at 41
 
 
 # --- data model ----------------------------------------------------------------
@@ -49,6 +57,7 @@ class HedgeProposal:
     explanation: str
     score: int
     status: str = "pending"  # pending | approved | rejected
+    kind: str = "option"     # option (Alpaca call ladder) | escrow (parametric policy)
 
 
 @dataclass
@@ -79,6 +88,7 @@ class Program:
     proposals: dict[str, HedgeProposal] = field(default_factory=dict)
     ladders: dict[str, HedgeLadder] = field(default_factory=dict)
     sweep_log: list[dict] = field(default_factory=list)
+    escrow_policies: list[dict] = field(default_factory=list)
 
 
 # --- Exposure -> HedgeProposal ---------------------------------------------------
@@ -110,6 +120,23 @@ def build_proposals(report: exposure_mod.Report) -> list[HedgeProposal]:
                 score=e.score,
             )
         )
+    # The parametric heatwave tail — one program-level escrow policy, approved like
+    # any other proposal but minted (not laddered) on approval.
+    proposals.append(
+        HedgeProposal(
+            proposal_id="prop_escrow",
+            ticker=ESCROW_TICKER,
+            underlying="Heatwave parametric cover",
+            monthly_notional=ESCROW_PREMIUM_USDC,
+            explanation=(
+                f"Premium ~€{ESCROW_PREMIUM_USDC:,.0f} -> payout ~€{ESCROW_PAYOUT_USDC:,.0f} "
+                f"if the regional heat index crosses {ESCROW_TRIGGER_INDEX}°C. Covers the tail "
+                f"options can't: lost footfall + broken refrigeration."
+            ),
+            score=90,
+            kind="escrow",
+        )
+    )
     return proposals
 
 
@@ -262,6 +289,36 @@ async def build_ladder(program: Program, ticker: str) -> HedgeLadder:
         ladder.rungs.append(rung)
     program.ladders[ticker] = ladder
     return ladder
+
+
+# --- parametric escrow (the heatwave tail leg) ----------------------------------
+async def mint_escrow_policy(program: Program) -> dict:
+    """Mint the one program-level parametric heatwave policy via the escrow venue.
+    Pre-funds the payout and records the premium for display (premium is not pulled
+    on-chain in the demo). Degrades to a fabricated ref if the escrow backend is down,
+    exactly like compute_and_sweep / the option ladder."""
+    res = await _post(
+        ESCROW,
+        "/policy",
+        {
+            "premium_usdc": ESCROW_PREMIUM_USDC,
+            "trigger_index": ESCROW_TRIGGER_INDEX,
+            "payout_usdc": ESCROW_PAYOUT_USDC,
+        },
+    )
+    ref = (res or {}).get("tx_hash") or f"sim-escrow-{program.current_month_index}"
+    entry = {
+        "ticker": ESCROW_TICKER,
+        "underlying": "Heatwave parametric cover",
+        "premium_usdc": ESCROW_PREMIUM_USDC,
+        "payout_usdc": ESCROW_PAYOUT_USDC,
+        "trigger_index": ESCROW_TRIGGER_INDEX,
+        "policy_id": (res or {}).get("policy_id"),
+        "ref": str(ref),
+        "status": "minted" if res else "degraded",
+    }
+    program.escrow_policies.append(entry)
+    return entry
 
 
 async def roll_ladder(program: Program, ladder: HedgeLadder) -> LadderRung:

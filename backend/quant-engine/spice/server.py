@@ -151,6 +151,7 @@ def _program_state(program: hedging.Program) -> dict:
         "ladders": {t: asdict(l) for t, l in program.ladders.items()},
         "monthly_excess_cash": program.monthly_excess_cash,
         "sweep_log": program.sweep_log,
+        "escrow_policies": program.escrow_policies,
     }
 
 
@@ -176,6 +177,9 @@ async def api_program_approve(program_id: str, ticker: str) -> dict:
     if proposal.status != "pending":
         raise HTTPException(status_code=400, detail=f"proposal already {proposal.status}")
     proposal.status = "approved"
+    # Escrow proposals mint a single parametric policy; option proposals build a ladder.
+    if proposal.kind == "escrow":
+        return await hedging.mint_escrow_policy(program)
     ladder = await hedging.build_ladder(program, ticker)
     return asdict(ladder)
 

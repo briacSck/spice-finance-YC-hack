@@ -1,4 +1,4 @@
-import type { Company, HedgeLadder, HedgeProposal, ProgramState, RunEvent } from "./types";
+import type { Company, EscrowPolicy, HedgeLadder, HedgeProposal, ProgramState, RunEvent } from "./types";
 import { MAISON_LEVAIN } from "./mockData";
 
 // The frontend talks ONLY to the orchestrator (eng-review D2).
@@ -69,8 +69,14 @@ export async function getProposals(programId: string): Promise<HedgeProposal[]> 
   return data.proposals as HedgeProposal[];
 }
 
-/** POST /api/program/{id}/proposals/{ticker}/approve -> the built 12-rung ladder */
-export async function approveProposal(programId: string, ticker: string): Promise<HedgeLadder> {
+/**
+ * POST /api/program/{id}/proposals/{ticker}/approve
+ * -> the built 12-rung ladder (option proposals) or the minted policy (escrow proposal).
+ */
+export async function approveProposal(
+  programId: string,
+  ticker: string
+): Promise<HedgeLadder | EscrowPolicy> {
   const res = await fetch(`${ORCHESTRATOR_BASE}/api/program/${programId}/proposals/${ticker}/approve`, {
     method: "POST",
   });

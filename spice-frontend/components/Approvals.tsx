@@ -128,7 +128,9 @@ export function Approvals({
                 <div className="text-[12.5px] leading-relaxed text-dim">{p.explanation}</div>
                 <div className="mt-2 flex items-center gap-4">
                   <span className="font-mono text-[12.5px] font-medium text-ink tnum">
-                    ~€{Math.round(p.monthly_notional / 100) / 10}k/month
+                    {p.kind === "escrow"
+                      ? `premium ~€${Math.round(p.monthly_notional).toLocaleString()} · one-time`
+                      : `~€${Math.round(p.monthly_notional / 100) / 10}k/month`}
                   </span>
                   <span className="font-mono text-[11.5px] text-faint">score {p.score}</span>
                   {p.status === "pending" && (
@@ -195,6 +197,25 @@ export function Approvals({
                   </div>
                 </div>
               ))}
+            {state && state.escrow_policies.length > 0 && (
+              <div className="mt-5 border-t border-hair2 pt-3">
+                <div className="mb-1.5 text-[11px] uppercase tracking-label text-faint">
+                  Parametric cover · heatwave tail
+                </div>
+                {state.escrow_policies.map((policy, i) => (
+                  <div key={policy.ref ?? i} className="mb-1.5">
+                    <div className="flex justify-between text-[11.5px] text-dim">
+                      <span>{policy.underlying}</span>
+                      <span className="font-mono">{policy.status}</span>
+                    </div>
+                    <div className="font-mono text-[11px] text-faint">
+                      €{Math.round(policy.premium_usdc).toLocaleString()} → €
+                      {Math.round(policy.payout_usdc).toLocaleString()} @ {policy.trigger_index}°C
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
             {state && state.sweep_log.length > 0 && (
               <div className="mt-5 border-t border-hair2 pt-3">
                 <div className="mb-1.5 text-[11px] uppercase tracking-label text-faint">Sweep log</div>
