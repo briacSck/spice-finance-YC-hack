@@ -3,8 +3,8 @@
 *The Exotic Asset Company.*
 
 > Every ordinary business is an unhedged commodity trader and doesn't know it.
-> A bakery is **long wheat, long gas, long power, long fats**. A trucking firm is
-> **long oil**. A foundry is **long electricity and copper**. None can see it,
+> A bakery is **short wheat, short gas, short power, short fats**. A trucking firm is
+> **short oil**. A foundry is **short electricity and copper**. None can see it,
 > price it, or hedge it — because hedging always required a desk, a broker, and size.
 >
 > **Spice maps a business's cost structure down to the tradeable commodity
