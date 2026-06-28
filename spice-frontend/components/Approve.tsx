@@ -59,9 +59,9 @@ export function Approve({ run, onExecute }: { run: boolean; onExecute: () => voi
       {/* kicker */}
       <div className="flex items-end justify-between px-11 pb-5 pt-2">
         <h1 className="max-w-[820px] text-[27px] font-semibold leading-[1.2] tracking-tight">
-          A wheat &amp; gas spike would make the margin{" "}
-          <b className="font-semibold text-terra">nearly disappear.</b>{" "}
-          <span className="text-green">Approve the hedge.</span>
+          If prices spike like in 2022, your margin{" "}
+          <b className="font-semibold text-terra">nearly disappears.</b>{" "}
+          <span className="text-green">One click protects you.</span>
         </h1>
         <div className="font-mono text-[12.5px] text-faint">{ANALYSIS.scenario}</div>
       </div>
@@ -69,9 +69,30 @@ export function Approve({ run, onExecute }: { run: boolean; onExecute: () => voi
       {error && <div className="mx-11 mb-3 text-[12.5px] text-terra">{error}</div>}
 
       <div className="grid min-h-0 flex-1 grid-cols-[1fr_440px] gap-[30px] px-11 pb-9">
-        {/* LEFT: margin collapse + VaR (no commodity book — that lives on the dashboard) */}
+        {/* LEFT: scenario context + margin collapse */}
         <div className="card relative flex flex-col px-8 py-[30px]">
-          <div className="label">Net margin under the shock</div>
+          {/* Scenario callout */}
+          <div className="mb-5 rounded-[10px] bg-[#FFF6EE] px-4 py-3">
+            <div className="text-[10.5px] font-semibold uppercase tracking-label text-terra">
+              Price spike scenario — what Spice is stress-testing
+            </div>
+            <div className="mt-1.5 flex items-center gap-6">
+              <div>
+                <span className="font-mono text-[18px] font-semibold text-terra">+38%</span>
+                <span className="ml-2 text-[12.5px] text-dim">wheat prices</span>
+              </div>
+              <div className="h-5 w-px bg-hair2" />
+              <div>
+                <span className="font-mono text-[18px] font-semibold text-terra">+25%</span>
+                <span className="ml-2 text-[12.5px] text-dim">gas prices</span>
+              </div>
+              <div className="h-5 w-px bg-hair2" />
+              <div className="text-[12px] text-dim">
+                This happened in 2022. <br />It can happen again next quarter.
+              </div>
+            </div>
+          </div>
+          <div className="label">What it does to your margin</div>
           <div className="flex flex-1 items-center justify-center gap-2">
             <div className="flex-1 text-center">
               <div className="text-[11px] uppercase tracking-label text-faint">Today</div>
@@ -108,12 +129,16 @@ export function Approve({ run, onExecute }: { run: boolean; onExecute: () => voi
 
         {/* RIGHT: proposal checklist + big green button */}
         <div className="card flex min-h-0 flex-col px-7 py-[26px]">
-          <div className="label mb-[16px]">Approve your hedges · real exposure analysis</div>
+          <div className="label mb-[6px]">Protect against those risks</div>
+          <div className="mb-[14px] text-[12.5px] leading-relaxed text-dim">
+            Lock in prices on wheat &amp; gas. Add a weather policy for extreme events.
+            Put your €180k idle cash to work — it earns enough to cover the cost.
+          </div>
           <div className="flex-1 overflow-y-auto pr-1">
             {proposals.length === 0 && (
               <div className="text-[12.5px] text-faint">{error ? "Could not load proposals." : "Loading proposals…"}</div>
             )}
-            {proposals.map((p, i) => {
+            {proposals.map((p) => {
               const on = !!checked[p.ticker];
               return (
                 <button
@@ -121,7 +146,7 @@ export function Approve({ run, onExecute }: { run: boolean; onExecute: () => voi
                   onClick={() => setChecked((c) => ({ ...c, [p.ticker]: !c[p.ticker] }))}
                   className={`mb-3 flex w-full items-start gap-3 rounded-[10px] border px-4 py-3 text-left transition-colors ${
                     on ? "border-green bg-panel" : "border-hair2 hover:border-dim"
-                  } ${i < proposals.length - 1 ? "" : ""}`}
+                  }`}
                 >
                   <span
                     className={`mt-0.5 flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center rounded-[5px] border text-[11px] font-bold ${
@@ -145,13 +170,37 @@ export function Approve({ run, onExecute }: { run: boolean; onExecute: () => voi
                 </button>
               );
             })}
+
+            {/* Morpho placement — always included, funds the cost of protection */}
+            <div className="mb-3 flex items-start gap-3 rounded-[10px] border border-[#5C7A6E] bg-panel px-4 py-3">
+              <span className="mt-0.5 flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center rounded-[5px] border border-[#5C7A6E] bg-[#5C7A6E] text-[11px] font-bold text-paper">
+                ✓
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="flex items-baseline gap-2">
+                  <span className="text-[10px] font-semibold uppercase tracking-label text-faint">MORPHO</span>
+                  <span className="text-[14px] font-semibold">Invest idle cash to fund the costs</span>
+                  <span className="ml-auto flex-shrink-0 rounded-full bg-hair2 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-label text-faint">
+                    auto
+                  </span>
+                </span>
+                <span className="mt-1 block text-[12px] leading-snug text-dim">
+                  €180,000 earns 4.2%/year in a savings vault — the interest covers the monthly cost of price protection. Recalled instantly if any trigger fires.
+                </span>
+                <span className="mt-1.5 block font-mono text-[11.5px] text-faint">
+                  +€630/month income · self-funded · fully liquid
+                </span>
+              </span>
+            </div>
           </div>
           <button
             className="btn-primary mt-4 py-3 text-[15px]"
             disabled={busy || selected.length === 0}
             onClick={handleApproveAll}
           >
-            {busy ? "Approving…" : `Approve ${selected.length} & execute`}{" "}
+            {busy
+              ? "Setting up protection…"
+              : `Protect my prices & invest spare cash`}{" "}
             <span className="font-normal opacity-75">→</span>
           </button>
         </div>

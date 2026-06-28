@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef } from "react";
-import { LogoMark } from "@/components/Logo";
 
 /**
  * Screen 0 — landing. Big product name + value proposition, then two entry boxes:
@@ -14,25 +13,25 @@ export function Landing({ onEnter }: { onEnter: (source: "demo" | "upload") => v
 
   return (
     <div className="flex h-full flex-col items-center justify-center px-11">
-      {/* brand + value proposition */}
       <div className="flex flex-col items-center text-center">
         <div className="flex items-center gap-3">
-          <LogoMark size={44} variant="seed" />
-          <div className="flex items-baseline text-[40px] font-semibold tracking-tight">
-            Spice
-            <span className="ml-3 text-[12px] font-normal uppercase tracking-label text-faint">
-              The Exotic Asset Company
+          <img src="/pepperLogo.png" alt="Spice" className="h-[60px] w-auto object-contain" />
+          <div className="flex h-[60px] flex-col justify-between leading-none">
+            <span className="text-[30px] font-semibold tracking-tight">Spice</span>
+            <span className="relative bottom-[10px] ml-[40px] text-[11px] font-normal text-faint">
+              <span className="italic">by</span>
+              <span className="ml-2 uppercase tracking-label">The Exotic Asset Company</span>
             </span>
           </div>
         </div>
-        <h1 className="mt-7 max-w-[820px] text-[34px] font-semibold leading-[1.2] tracking-tight">
-          Every ordinary business is an unhedged commodity trader.{" "}
-          <span className="text-green">Spice runs the desk for them.</span>
+        <h1 className="mt-8 max-w-[820px] text-[34px] font-semibold leading-[1.2] tracking-tight">
+          Every small business carries risks it was never built to manage.{" "}
+          <span className="text-green">Spice covers all three — automatically.</span>
         </h1>
         <p className="mt-4 max-w-[640px] text-[15px] leading-relaxed text-dim">
-          Read the bank statement, find the hidden commodity exposure, and hedge it across
-          options, parametric cover and on-chain yield — autonomously, with a human approving
-          once.
+          Price spikes erode your margins. Idle cash loses to inflation. Climate shocks hit
+          revenue directly. Spice finds these risks in your accounts and hedges them across
+          options, yield and parametric cover — 24/7, no desk required.
         </p>
       </div>
 
