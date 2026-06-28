@@ -2,10 +2,22 @@
 
 import { useEffect, useRef, useState } from "react";
 import { HEDGING_VENUES, PLACEMENT_VENUES, RESULT, SCRIPTED_FEED } from "@/lib/mockData";
+import { USE_MOCK } from "@/lib/api";
+import { useRun } from "@/lib/useRun";
+import type { ExecutionEvent, FeedItem } from "@/lib/types";
 
-type Venue = (typeof HEDGING_VENUES)[number];
+interface VenueRowData {
+  n: string;
+  s: string;
+  status: "queued" | "accepted" | "settled";
+  label: string;
+  ref: string;
+  amount: string;
+  pos: boolean;
+  explorer?: boolean;
+}
 
-function VenueRow({ v }: { v: Venue }) {
+function VenueRow({ v }: { v: VenueRowData }) {
   const settled = v.status === "settled";
   return (
     <div className="flex items-center gap-[18px] border-t border-hair2 py-[10px]">
@@ -20,7 +32,7 @@ function VenueRow({ v }: { v: Venue }) {
         </span>
         <span className="font-mono text-[11.5px] text-faint">
           {v.ref}
-          {"explorer" in v && v.explorer && (
+          {v.explorer && (
             <>
               {" · "}
               <a className="text-green no-underline" href="#">
@@ -35,13 +47,40 @@ function VenueRow({ v }: { v: Venue }) {
   );
 }
 
+// Map a live execution event onto the UI's venue-row shape + its lane.
+const VENUE_META: Record<string, { name: string; lane: "hedging" | "placement" }> = {
+  alpaca: { name: "Alpaca · options", lane: "hedging" },
+  escrow: { name: "Insurance · parametric", lane: "hedging" },
+  morpho: { name: "Morpho · yield", lane: "placement" },
+};
+
+function execToRow(e: ExecutionEvent): VenueRowData & { lane: "hedging" | "placement" } {
+  const meta = VENUE_META[e.venue] ?? { name: e.venue, lane: "hedging" as const };
+  const val = e.pnl ?? e.amount ?? 0;
+  const sign = e.pnl && e.pnl > 0 ? "+" : "";
+  return {
+    n: meta.name,
+    lane: meta.lane,
+    s: e.action,
+    status: e.status,
+    label: e.status === "settled" ? "settled" : "accepted",
+    ref: e.ref,
+    amount: val ? `${sign}€${Math.round(val).toLocaleString("en-US")}` : "—",
+    pos: !!e.pnl && e.pnl > 0,
+    explorer: !!e.explorer_url,
+  };
+}
+
 export function Execution({ run }: { run: boolean }) {
-  // DR4: type the feed in event-by-event. Mock timing; swap for SSE via lib/api subscribeToRun.
+  // Live SSE run (no-op when USE_MOCK — the scripted path below drives the demo).
+  const live = useRun(run, false);
+
+  // DR4 (mock): type the scripted feed in event-by-event.
   const [shown, setShown] = useState(run ? 0 : SCRIPTED_FEED.length);
   const feedRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!run) return;
+    if (!run || !USE_MOCK) return;
     setShown(0);
     let i = 0;
     const id = setInterval(() => {
@@ -52,9 +91,21 @@ export function Execution({ run }: { run: boolean }) {
     return () => clearInterval(id);
   }, [run]);
 
+  // Feed items: scripted (mock) or live SSE.
+  const feedItems: Array<Omit<FeedItem, "id">> = USE_MOCK ? SCRIPTED_FEED.slice(0, shown) : live.feed;
+
   useEffect(() => {
     feedRef.current?.scrollTo({ top: feedRef.current.scrollHeight, behavior: "smooth" });
-  }, [shown]);
+  }, [feedItems.length]);
+
+  // Venue lanes + banner: mock constants, or derived from live executions / done.
+  const liveRows = live.executions.map(execToRow);
+  const hedgingVenues: VenueRowData[] = USE_MOCK ? HEDGING_VENUES : liveRows.filter((r) => r.lane === "hedging");
+  const placementVenues: VenueRowData[] = USE_MOCK ? PLACEMENT_VENUES : liveRows.filter((r) => r.lane === "placement");
+
+  const varAfter = USE_MOCK ? RESULT.varAfter : live.analysis?.var_after ?? RESULT.varAfter;
+  const marginHeld = USE_MOCK ? RESULT.marginHeld : live.done?.margin_with_hedge ?? RESULT.marginHeld;
+  const hedgePnl = USE_MOCK ? RESULT.hedgePnl : live.done?.hedge_pnl ?? RESULT.hedgePnl;
 
   const nodeColor = (kind: string) =>
     kind === "exec"
@@ -84,20 +135,20 @@ export function Execution({ run }: { run: boolean }) {
             <div className="text-[10.5px] font-medium uppercase tracking-label text-[#7FB7A2]">Value at Risk · 95%</div>
             <div className="mt-2 font-mono text-[30px] font-semibold tracking-tight tnum">
               <span className="mr-2.5 text-[19px] font-normal text-[#6E8C80] line-through">13.1%</span>
-              {(RESULT.varAfter * 100).toFixed(1)}%
+              {(varAfter * 100).toFixed(1)}%
             </div>
           </div>
           <div>
             <div className="text-[10.5px] font-medium uppercase tracking-label text-[#7FB7A2]">Net margin · held</div>
             <div className="mt-2 font-mono text-[30px] font-semibold tracking-tight tnum">
-              {(RESULT.marginHeld * 100).toFixed(1)}%
+              {(marginHeld * 100).toFixed(1)}%
               <span className="ml-[7px] text-[12.5px] font-normal text-[#9DBDB1]">peer 3.3%</span>
             </div>
           </div>
           <div>
             <div className="text-[10.5px] font-medium uppercase tracking-label text-[#7FB7A2]">Hedge P&amp;L</div>
             <div className="mt-2 font-mono text-[30px] font-semibold tracking-tight text-greenon tnum">
-              +€107.5k
+              +€{(hedgePnl / 1000).toFixed(1)}k
             </div>
           </div>
         </div>
@@ -112,7 +163,7 @@ export function Execution({ run }: { run: boolean }) {
           </div>
           <div ref={feedRef} className="relative flex-1 overflow-hidden px-7 pb-[18px]">
             <div className="absolute bottom-[18px] left-[34px] top-0 w-px bg-hair" />
-            {SCRIPTED_FEED.slice(0, shown).map((e, i) => (
+            {feedItems.map((e, i) => (
               <div key={i} className="ev-in relative flex gap-4 pb-[15px]">
                 <span className={`z-[2] mt-0.5 h-[13px] w-[13px] flex-shrink-0 rounded-full border-[1.5px] ${nodeColor(e.kind)}`} />
                 <div className="flex-1">
@@ -139,10 +190,11 @@ export function Execution({ run }: { run: boolean }) {
                 <small className="mt-0.5 block text-[12px] font-normal text-faint">caps the spike · covers the tail</small>
               </div>
               <div className="ml-auto flex items-center gap-2 text-[12px] text-dim">
-                <span className="h-1.5 w-1.5 rounded-full bg-green" />2 venues
+                <span className="h-1.5 w-1.5 rounded-full bg-green" />
+                {hedgingVenues.length} venues
               </div>
             </div>
-            {HEDGING_VENUES.map((v) => (
+            {hedgingVenues.map((v) => (
               <VenueRow key={v.n} v={v} />
             ))}
           </div>
@@ -155,10 +207,11 @@ export function Execution({ run }: { run: boolean }) {
                 <small className="mt-0.5 block text-[12px] font-normal text-faint">funds the hedge from idle cash</small>
               </div>
               <div className="ml-auto flex items-center gap-2 text-[12px] text-dim">
-                <span className="h-1.5 w-1.5 rounded-full bg-green" />1 venue
+                <span className="h-1.5 w-1.5 rounded-full bg-green" />
+                {placementVenues.length} venue
               </div>
             </div>
-            {PLACEMENT_VENUES.map((v) => (
+            {placementVenues.map((v) => (
               <VenueRow key={v.n} v={v} />
             ))}
           </div>
