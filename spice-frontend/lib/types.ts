@@ -75,3 +75,49 @@ export interface FeedItem {
   text: string;
   time: string;
 }
+
+// --- hedge program (GET/POST /api/program/...) ---
+
+export interface HedgeProposal {
+  proposal_id: string;
+  ticker: string;
+  underlying: string;
+  monthly_notional: number;
+  explanation: string;
+  score: number;
+  status: "pending" | "approved" | "rejected";
+}
+
+export interface LadderRung {
+  month_index: number;
+  target_month: string; // "YYYY-MM"
+  contract_symbol: string | null;
+  quantity: number;
+  strike: number | null;
+  status: "bought" | "degraded";
+  order_ref: string | null;
+}
+
+export interface HedgeLadder {
+  ticker: string;
+  underlying: string;
+  rungs: LadderRung[];
+  built_at_month_index: number;
+}
+
+export interface SweepLogEntry {
+  month_index: number;
+  amount_usdc: number;
+  ref: string;
+  status: "settled" | "degraded";
+}
+
+export interface ProgramState {
+  program_id: string;
+  company_name: string;
+  current_month_index: number;
+  proposals: HedgeProposal[];
+  ladders: Record<string, HedgeLadder>;
+  monthly_excess_cash: number;
+  sweep_log: SweepLogEntry[];
+}

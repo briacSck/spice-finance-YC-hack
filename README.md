@@ -31,16 +31,18 @@ Built for a YC hackathon (décacorn track).
 
 | Path | What |
 |---|---|
-| [`BRIEF.md`](BRIEF.md) | The idea, insight, beachhead, moat |
-| [`COMPETITION.md`](COMPETITION.md) | Competitive whitespace map |
-| [`DEMO.md`](DEMO.md) | Architecture, hero demo, 48h build plan, locked decisions |
-| [`quant-engine/`](quant-engine/) | Quant engine (runnable) + orchestrator + [API contract](quant-engine/API_CONTRACT.md) |
-| [`alpaca-backend/`](alpaca-backend/) | Commodity-ETF options service (FastAPI, paper) + the exposure-inference registry |
+| [`docs/BRIEF.md`](docs/BRIEF.md) | The idea, insight, beachhead, moat |
+| [`docs/COMPETITION.md`](docs/COMPETITION.md) | Competitive whitespace map |
+| [`docs/DEMO.md`](docs/DEMO.md) | Architecture, hero demo, 48h build plan, locked decisions |
+| [`data-generation/`](data-generation/) | Synthetic SMB financial data generator (`cashplan/` lib + CLI scripts) |
+| [`backend/quant-engine/`](backend/quant-engine/) | Quant engine (runnable) + orchestrator + [API contract](backend/quant-engine/API_CONTRACT.md) |
+| [`backend/alpaca-backend/`](backend/alpaca-backend/) | Commodity-ETF options service (FastAPI, paper) + the exposure-inference registry |
+| [`backend/morpho-backend/`](backend/morpho-backend/) | On-chain lending/hedge execution service (testnet) |
 
 ## Quickstart — see the brain run (zero deps)
 
 ```bash
-cd quant-engine
+cd backend/quant-engine
 python run_analysis.py
 ```
 

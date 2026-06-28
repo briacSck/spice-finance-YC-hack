@@ -6,8 +6,8 @@ formula-driven and openpyxl does not evaluate formulas (data_only reads None on
 a workbook never opened in Excel). This CSV is the contract the exposure
 extractor consumes.
 
-    python scripts/export_cost_csv.py "boulangerie artisanale" --name "Maison Levain" --out bakery_costs.csv
-    cd quant-engine && python -m spice.exposure ../bakery_costs.csv
+    python data-generation/scripts/export_cost_csv.py "boulangerie artisanale" --name "Maison Levain" --out bakery_costs.csv
+    cd backend/quant-engine && python -m spice.exposure ../../../bakery_costs.csv
 """
 
 from __future__ import annotations
@@ -17,7 +17,7 @@ import csv
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # repo root on path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # data-generation/ on path, so `cashplan` resolves
 
 from cashplan.business_profiles import infer_business_profile, slugify
 

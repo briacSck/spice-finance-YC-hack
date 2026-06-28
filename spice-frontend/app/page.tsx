@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import { TopBar, type Tab } from "@/components/TopBar";
 import { Dashboard } from "@/components/Dashboard";
 import { Analyse } from "@/components/Analyse";
+import { Approvals } from "@/components/Approvals";
 import { Execution } from "@/components/Execution";
 
 const STATUS: Record<Tab, string> = {
   dashboard: "Agent online · Opus 4.8 · ready",
   analyse: "Analysing · propagate_shock",
+  approvals: "Program · awaiting operator",
   execution: "Executing · 2 agents · 3 venues",
 };
 
@@ -43,6 +45,8 @@ export default function Page() {
   // bump on each entry so on-screen motion (count-up, feed type-in) replays
   const [analyseRun, setAnalyseRun] = useState(0);
   const [execRun, setExecRun] = useState(0);
+  // lifted here (not into Approvals) so the hedge program survives tab switches
+  const [programId, setProgramId] = useState<string | null>(null);
   const { scale, ready } = useFitScale();
 
   function go(next: Tab) {
@@ -67,6 +71,7 @@ export default function Page() {
           {tab === "analyse" && (
             <Analyse key={analyseRun} run={analyseRun > 0} onExecute={() => go("execution")} />
           )}
+          {tab === "approvals" && <Approvals programId={programId} onProgramId={setProgramId} />}
           {tab === "execution" && <Execution key={execRun} run={execRun > 0} />}
         </div>
       </div>

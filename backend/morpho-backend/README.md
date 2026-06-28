@@ -12,7 +12,7 @@ standard, so the same code works mainnet and testnet — just swap chain + vault
 
 ## Setup
 ```bash
-cd morpho-backend
+cd backend/morpho-backend
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env

@@ -1,0 +1,104 @@
+{
+  "business": {
+    "name": "Transport Routier",
+    "period_start": "2021-01",
+    "period_end": "2023-12",
+    "months_analyzed": 36
+  },
+  "financial_summary": {
+    "average_monthly_revenue": 73341.42,
+    "average_monthly_expenses": 72903.08,
+    "average_margin_pct": 0.006,
+    "mapped_expense_share": 0.4032
+  },
+  "exposures": [
+    {
+      "ticker": "USO",
+      "underlying": "Oil",
+      "total_spend": 1058100.08,
+      "expense_share": 0.4032,
+      "revenue_share": 0.4008,
+      "mapping_confidence": 0.95,
+      "monthly_volatility": 0.3146,
+      "price_volatility": 0.4128,
+      "price_vol_source": "INSEE BDM BRENT (10y monthly)",
+      "shock20_margin_points_lost": 8.02,
+      "hedge_notional": 352700.03,
+      "score": 91,
+      "rank": 1,
+      "recommendation": "Hedge recommended",
+      "evidence": [
+        {
+          "source_row": 6,
+          "description": "Diesel fuel",
+          "amount": 45741.93,
+          "matched_rule": "tag 'Oil' -> USO"
+        },
+        {
+          "source_row": 6,
+          "description": "Diesel fuel",
+          "amount": 44586.71,
+          "matched_rule": "tag 'Oil' -> USO"
+        },
+        {
+          "source_row": 6,
+          "description": "Diesel fuel",
+          "amount": 40099.37,
+          "matched_rule": "tag 'Oil' -> USO"
+        }
+      ]
+    }
+  ],
+  "unmapped": {
+    "expense_share": 0.5968,
+    "top_rows": [
+      {
+        "source_row": 14,
+        "description": "Drivers payroll and charges",
+        "amount": 25500.0
+      },
+      {
+        "source_row": 14,
+        "description": "Drivers payroll and charges",
+        "amount": 25500.0
+      },
+      {
+        "source_row": 14,
+        "description": "Drivers payroll and charges",
+        "amount": 25500.0
+      },
+      {
+        "source_row": 14,
+        "description": "Drivers payroll and charges",
+        "amount": 25500.0
+      },
+      {
+        "source_row": 14,
+        "description": "Drivers payroll and charges",
+        "amount": 25500.0
+      }
+    ]
+  },
+  "var": {
+    "annual_margin_var_pct_before": 0.2314,
+    "annual_margin_var_pct_after_hedge": 0.0347,
+    "eur_before": 203684.27,
+    "eur_after": 30552.64
+  },
+  "llm": {
+    "status": "ok",
+    "provider": "openai",
+    "model": "gpt-4o-mini",
+    "executive_angle": "As the owner of Transport Routier, understanding your exposure to commodity prices is crucial for maintaining your thin profit margins. With the current economic climate, fluctuations in oil prices can significantly impact your bottom line, especially given that diesel fuel is a major cost driver for your operations.",
+    "owner_message": "This report outlines how changes in oil prices could affect your finances, particularly focusing on diesel fuel, which is a significant part of your expenses. By understanding these impacts, you can make informed decisions about whether to lock in prices now or wait.",
+    "demo_script": "Let's break down your exposure to oil prices. Diesel fuel accounts for a substantial portion of your costs, specifically 40.32% of your expenses. If oil prices were to jump by 20%, you would lose approximately 8.02 margin points. Given your average monthly revenue of €73,341.42, this translates to about -€740 per month. This is a significant amount, especially considering your already thin margin of just 0.6%. It's important to note that other expenses, like driver payroll, are not linked to commodity prices, which limits our analysis to just the mapped expenses. This means we need to be particularly cautious about fluctuations in oil prices, as they can have a direct and immediate impact on your profitability.",
+    "ambiguity_notes": "The unmapped expenses, which account for 59.68% of total expenses, include fixed costs like salaries and rent that do not fluctuate with commodity prices. This means that while we can analyze the impact of oil price changes on your variable costs, we cannot account for how these changes might affect your overall financial health when fixed costs are considered.",
+    "hedge_decisions": [
+      {
+        "ticker": "USO",
+        "decision": "Hedge recommended",
+        "reasoning": "With an expense share of 40.32% and a potential loss of 8.02 margin points translating to roughly -€740/month, hedging against oil price increases is advisable to protect your already thin margins."
+      }
+    ]
+  }
+}

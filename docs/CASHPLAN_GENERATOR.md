@@ -2,7 +2,7 @@
 
 ## What It Does
 
-`scripts/generate_cash_plan.py` generates a Spice-style monthly cash-plan workbook
+`data-generation/scripts/generate_cash_plan.py` generates a Spice-style monthly cash-plan workbook
 for a business description such as:
 
 - `boulangerie artisanale`
@@ -29,13 +29,13 @@ price movements.
 ## Basic Usage
 
 ```powershell
-python scripts\generate_cash_plan.py "boulangerie artisanale"
+python data-generation\scripts\generate_cash_plan.py "boulangerie artisanale"
 ```
 
 With explicit revenue and output path:
 
 ```powershell
-python scripts\generate_cash_plan.py "atelier de plasturgie injection PVC" `
+python data-generation\scripts\generate_cash_plan.py "atelier de plasturgie injection PVC" `
   --annual-revenue 1200000 `
   --start-year 2026 `
   --years 3 `
@@ -45,7 +45,7 @@ python scripts\generate_cash_plan.py "atelier de plasturgie injection PVC" `
 Reference the existing bakery model without modifying it:
 
 ```powershell
-python scripts\generate_cash_plan.py "boulangerie artisanale" `
+python data-generation\scripts\generate_cash_plan.py "boulangerie artisanale" `
   --template C:\Users\saraf\Downloads\Plans_Tresorerie\Boulangerie_Plan_Tresorerie.xlsx `
   --output C:\tmp\boulangerie_cash_plan.xlsx
 ```
@@ -58,7 +58,7 @@ series shaped like market data, so the demo always works.
 Online mode:
 
 ```powershell
-python scripts\generate_cash_plan.py "transport routier" --online
+python data-generation\scripts\generate_cash_plan.py "transport routier" --online
 ```
 
 Online mode tries:
@@ -77,7 +77,7 @@ ALPHA_VANTAGE_API_KEY=your_key_here
 ENTSOE_SECURITY_TOKEN=your_token_here
 "@ | Set-Content .env
 
-python scripts\generate_cash_plan.py "entreprise de construction" `
+python data-generation\scripts\generate_cash_plan.py "entreprise de construction" `
   --online
 ```
 
@@ -135,7 +135,7 @@ depends on the sector, region, index, and benchmark question.
 You can pass a full INSEE SDMX URL:
 
 ```powershell
-python scripts\generate_cash_plan.py "restaurant" `
+python data-generation\scripts\generate_cash_plan.py "restaurant" `
   --online `
   --insee-sdmx-url "https://bdm.insee.fr/series/sdmx/data/..."
 ```
@@ -157,7 +157,7 @@ When `--online` is enabled and an ENTSO-E token is configured, `ELECTRICITY`
 uses French day-ahead spot prices from the ENTSO-E Transparency Platform:
 
 ```powershell
-python scripts\generate_cash_plan.py "restaurant" `
+python data-generation\scripts\generate_cash_plan.py "restaurant" `
   --online `
   --entsoe-token "your_token_here"
 ```
@@ -182,12 +182,12 @@ The generator has first-pass archetypes for:
 | Generic SMB | Conservative fallback plus keyword-triggered commodity lines |
 
 Industrial SME costs are generated from the dedicated module
-`cashplan/industrial_costs.py`. It contains revenue-share drivers for raw
+`data-generation/cashplan/industrial_costs.py`. It contains revenue-share drivers for raw
 materials, energy, payroll, machine leases, maintenance, logistics and overhead,
 then converts those drivers into realistic monthly quantities and unit prices.
 
 The industrial presets now use a precise material taxonomy from
-`cashplan/materials.py`. Instead of one generic "metal" bucket, the model can
+`data-generation/cashplan/materials.py`. Instead of one generic "metal" bucket, the model can
 separate:
 
 - carbon steel and galvanized steel, proxied by iron ore in v1;
