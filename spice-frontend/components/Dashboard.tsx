@@ -34,14 +34,18 @@ export function Dashboard({ onRun }: { onRun: () => void }) {
       {/* KPI band — one card, hairline columns (NOT a 2x2 grid) */}
       <div className="card grid grid-cols-4 py-[6px]">
         {[
-          { k: "Revenue", v: "€1.40M", d: "FY trailing", t: false },
-          { k: "Cash on hand", v: "€180k", d: "idle · deployable", t: false },
-          { k: "Net margin", v: "11.0%", d: "exposed to input shock", t: true },
-          { k: "Hidden exposure", v: "74%", d: "of costs are commodities", t: true },
+          { k: "Revenue", v: "€1.40M", d: "FY trailing", t: false, g: false },
+          { k: "Cash on hand", v: "€180k", d: "idle · deployable", t: false, g: false },
+          { k: "Net margin", v: "11.0%", d: "exposed to input shock", t: true, g: false },
+          { k: "Money saved", v: "€108k", d: "projected · hedged vs shock", t: false, g: true },
         ].map((kpi, i) => (
           <div key={kpi.k} className={`px-[30px] py-[26px] ${i < 3 ? "border-r border-hair2" : ""}`}>
             <div className="label">{kpi.k}</div>
-            <div className="mt-[14px] font-mono text-[34px] font-semibold leading-none tracking-tight tnum">
+            <div
+              className={`mt-[14px] font-mono text-[34px] font-semibold leading-none tracking-tight tnum ${
+                kpi.g ? "text-green" : ""
+              }`}
+            >
               {kpi.v}
             </div>
             <div className={`mt-[11px] text-[12.5px] ${kpi.t ? "text-terra" : "text-dim"}`}>{kpi.d}</div>
