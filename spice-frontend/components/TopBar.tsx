@@ -1,7 +1,5 @@
 "use client";
 
-import { LogoMark } from "@/components/Logo";
-
 export type Tab = "dashboard" | "approve" | "execution";
 
 const TABS: { id: Tab; label: string }[] = [
@@ -23,11 +21,12 @@ export function TopBar({
     <header className="flex h-[100px] shrink-0 items-center justify-between border-b border-hair2 px-11">
       <div className="flex items-center gap-[34px]">
         <div className="flex items-center gap-3">
-          <LogoMark size={34} variant="seed" />
-          <div className="hidden text-[18px] font-semibold tracking-tight sm:flex sm:items-baseline">
-            Spice
-            <span className="ml-3 text-[11px] font-normal uppercase tracking-label text-faint">
-              The Exotic Asset Company
+          <img src="/pepperLogo.png" alt="Spice" className="h-[60px] w-auto object-contain" />
+          <div className="hidden h-[60px] flex-col justify-between leading-none sm:flex">
+            <span className="text-[30px] font-semibold tracking-tight">Spice</span>
+            <span className="relative bottom-[10px] ml-[40px] text-[11px] font-normal text-faint">
+              <span className="italic">by</span>
+              <span className="ml-2 uppercase tracking-label">The Exotic Asset Company</span>
             </span>
           </div>
         </div>
