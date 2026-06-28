@@ -1,0 +1,253 @@
+{
+  "currency": "EUR (data benchmark [S16] is USD; ~parity assumed)",
+  "benchmarks": {
+    "gpo_fee_band": [
+      0.0086,
+      0.0362
+    ],
+    "hedge_take_mature_bps": 40.0,
+    "hedge_take_short_bps": 15.0,
+    "data_share_mature": 0.08
+  },
+  "market": {
+    "tam_clients": 14280000,
+    "sam_clients": 9830000,
+    "revenue_tam_eur": 169300000000.0,
+    "revenue_sam_eur": 112600000000.0,
+    "som_scenarios": {
+      "conservative": [
+        0.0005,
+        4916,
+        56300000.0
+      ],
+      "base": [
+        0.0015,
+        14748,
+        168900000.0
+      ],
+      "upside": [
+        0.005,
+        49160,
+        562900000.0
+      ]
+    }
+  },
+  "france_assumption": {
+    "suitable_accounts": 550000,
+    "arpu_factor": 0.6,
+    "penetration": {
+      "low": 0.01,
+      "base": 0.03,
+      "high": 0.05
+    },
+    "ceiling_penetration": 0.7
+  },
+  "blended_arpu": {
+    "mature_blended_arpu_eur": 11856,
+    "sam_blended_arpu_eur": 11455,
+    "short_mature_ratio": 0.2037,
+    "short_blended_arpu_eur": 2415
+  },
+  "per_client": [
+    {
+      "vertical": "Boulangerie",
+      "hedge_notional_eur": 83900,
+      "procurement_eur": 251600,
+      "combined_volume_eur": 335500,
+      "short_rev_per_client_eur": 795,
+      "mature_rev_per_client_eur": 5400,
+      "hedging_mature_eur": 336,
+      "procurement_mature_eur": 4632,
+      "data_mature_eur": 432,
+      "implied_proc_commission_mature": 0.0184,
+      "implied_proc_commission_mature_in_gpo_band": true,
+      "implied_effective_take_mature": 0.0161,
+      "implied_effective_take_short": 0.0024,
+      "hedging_short_eur": 126,
+      "procurement_short_eur": 669,
+      "implied_proc_commission_short": 0.0027
+    },
+    {
+      "vertical": "Transport",
+      "hedge_notional_eur": 352700,
+      "procurement_eur": 1100000,
+      "combined_volume_eur": 1452700,
+      "short_rev_per_client_eur": 2600,
+      "mature_rev_per_client_eur": 18900,
+      "hedging_mature_eur": 1411,
+      "procurement_mature_eur": 15977,
+      "data_mature_eur": 1512,
+      "implied_proc_commission_mature": 0.0145,
+      "implied_proc_commission_mature_in_gpo_band": true,
+      "implied_effective_take_mature": 0.013,
+      "implied_effective_take_short": 0.0018,
+      "hedging_short_eur": 529,
+      "procurement_short_eur": 2071,
+      "implied_proc_commission_short": 0.0019
+    },
+    {
+      "vertical": "Construction",
+      "hedge_notional_eur": 185300,
+      "procurement_eur": 555000,
+      "combined_volume_eur": 740300,
+      "short_rev_per_client_eur": 1500,
+      "mature_rev_per_client_eur": 10600,
+      "hedging_mature_eur": 741,
+      "procurement_mature_eur": 9011,
+      "data_mature_eur": 848,
+      "implied_proc_commission_mature": 0.0162,
+      "implied_proc_commission_mature_in_gpo_band": true,
+      "implied_effective_take_mature": 0.0143,
+      "implied_effective_take_short": 0.002,
+      "hedging_short_eur": 278,
+      "procurement_short_eur": 1222,
+      "implied_proc_commission_short": 0.0022
+    },
+    {
+      "vertical": "Plastics",
+      "hedge_notional_eur": 590900,
+      "procurement_eur": 590900,
+      "combined_volume_eur": 1181800,
+      "short_rev_per_client_eur": 4200,
+      "mature_rev_per_client_eur": 13100,
+      "hedging_mature_eur": 2364,
+      "procurement_mature_eur": 9688,
+      "data_mature_eur": 1048,
+      "implied_proc_commission_mature": 0.0164,
+      "implied_proc_commission_mature_in_gpo_band": true,
+      "implied_effective_take_mature": 0.0111,
+      "implied_effective_take_short": 0.0036,
+      "hedging_short_eur": 886,
+      "procurement_short_eur": 3314,
+      "implied_proc_commission_short": 0.0056
+    },
+    {
+      "vertical": "Metalwork",
+      "hedge_notional_eur": 277600,
+      "procurement_eur": 555000,
+      "combined_volume_eur": 832600,
+      "short_rev_per_client_eur": 2200,
+      "mature_rev_per_client_eur": 11200,
+      "hedging_mature_eur": 1110,
+      "procurement_mature_eur": 9194,
+      "data_mature_eur": 896,
+      "implied_proc_commission_mature": 0.0166,
+      "implied_proc_commission_mature_in_gpo_band": true,
+      "implied_effective_take_mature": 0.0135,
+      "implied_effective_take_short": 0.0026,
+      "hedging_short_eur": 416,
+      "procurement_short_eur": 1784,
+      "implied_proc_commission_short": 0.0032
+    },
+    {
+      "vertical": "Woodworking",
+      "hedge_notional_eur": 370300,
+      "procurement_eur": 370300,
+      "combined_volume_eur": 740600,
+      "short_rev_per_client_eur": 2700,
+      "mature_rev_per_client_eur": 8300,
+      "hedging_mature_eur": 1481,
+      "procurement_mature_eur": 6155,
+      "data_mature_eur": 664,
+      "implied_proc_commission_mature": 0.0166,
+      "implied_proc_commission_mature_in_gpo_band": true,
+      "implied_effective_take_mature": 0.0112,
+      "implied_effective_take_short": 0.0036,
+      "hedging_short_eur": 555,
+      "procurement_short_eur": 2145,
+      "implied_proc_commission_short": 0.0058
+    },
+    {
+      "vertical": "Light mfg",
+      "hedge_notional_eur": 449200,
+      "procurement_eur": 898000,
+      "combined_volume_eur": 1347200,
+      "short_rev_per_client_eur": 3300,
+      "mature_rev_per_client_eur": 17400,
+      "hedging_mature_eur": 1797,
+      "procurement_mature_eur": 14211,
+      "data_mature_eur": 1392,
+      "implied_proc_commission_mature": 0.0158,
+      "implied_proc_commission_mature_in_gpo_band": true,
+      "implied_effective_take_mature": 0.0129,
+      "implied_effective_take_short": 0.0024,
+      "hedging_short_eur": 674,
+      "procurement_short_eur": 2626,
+      "implied_proc_commission_short": 0.0029
+    }
+  ],
+  "gtm_ramp": [
+    {
+      "stage": "A_wedge",
+      "scenario": "base",
+      "clients": 500,
+      "arpu_eur": 2415,
+      "annual_revenue_eur": 1207500,
+      "basis": "500 French clients at short-term (hedging-only) ARPU"
+    },
+    {
+      "stage": "B_france",
+      "scenario": "low",
+      "clients": 5500,
+      "arpu_eur": 7114,
+      "annual_revenue_eur": 39127000,
+      "basis": "1% of ~550,000 suitable French accounts at 60% mature ARPU"
+    },
+    {
+      "stage": "B_france",
+      "scenario": "base",
+      "clients": 16500,
+      "arpu_eur": 7114,
+      "annual_revenue_eur": 117381000,
+      "basis": "3% of ~550,000 suitable French accounts at 60% mature ARPU"
+    },
+    {
+      "stage": "B_france",
+      "scenario": "high",
+      "clients": 27500,
+      "arpu_eur": 7114,
+      "annual_revenue_eur": 195635000,
+      "basis": "5% of ~550,000 suitable French accounts at 60% mature ARPU"
+    },
+    {
+      "stage": "B_france",
+      "scenario": "ceiling_70pct",
+      "clients": 385000,
+      "arpu_eur": 11856,
+      "annual_revenue_eur": 4564560000,
+      "basis": "'70% of France' \u2014 theoretical ceiling at mature ARPU, shown for reference only"
+    },
+    {
+      "stage": "C_sam",
+      "scenario": "conservative",
+      "clients": 4916,
+      "arpu_eur": 11455,
+      "annual_revenue_eur": 56312780,
+      "basis": "0.05% of SAM (9,830,000 clients) \u2014 source SOM 'conservative' (= EUR 56.3M)"
+    },
+    {
+      "stage": "C_sam",
+      "scenario": "base",
+      "clients": 14748,
+      "arpu_eur": 11455,
+      "annual_revenue_eur": 168938340,
+      "basis": "0.15% of SAM (9,830,000 clients) \u2014 source SOM 'base' (= EUR 168.9M)"
+    },
+    {
+      "stage": "C_sam",
+      "scenario": "upside",
+      "clients": 49160,
+      "arpu_eur": 11455,
+      "annual_revenue_eur": 563127800,
+      "basis": "0.50% of SAM (9,830,000 clients) \u2014 source SOM 'upside' (= EUR 562.9M)"
+    },
+    {
+      "stage": "D_tam",
+      "scenario": "ceiling",
+      "clients": 14280000,
+      "arpu_eur": 11856,
+      "annual_revenue_eur": 169303680000,
+      "basis": "Full formal suitable SME TAM at mature ARPU (= EUR 169.3B)"
+    }
+  ]
+}

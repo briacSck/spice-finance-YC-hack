@@ -1,0 +1,8 @@
+vertical,hedge_notional_eur,procurement_eur,combined_volume_eur,short_rev_per_client_eur,mature_rev_per_client_eur,hedging_mature_eur,procurement_mature_eur,data_mature_eur,implied_proc_commission_mature,implied_proc_commission_mature_in_gpo_band,implied_effective_take_mature,implied_effective_take_short,hedging_short_eur,procurement_short_eur,implied_proc_commission_short
+Boulangerie,83900,251600,335500,795,5400,336,4632,432,0.0184,True,0.0161,0.0024,126,669,0.0027
+Transport,352700,1100000,1452700,2600,18900,1411,15977,1512,0.0145,True,0.013,0.0018,529,2071,0.0019
+Construction,185300,555000,740300,1500,10600,741,9011,848,0.0162,True,0.0143,0.002,278,1222,0.0022
+Plastics,590900,590900,1181800,4200,13100,2364,9688,1048,0.0164,True,0.0111,0.0036,886,3314,0.0056
+Metalwork,277600,555000,832600,2200,11200,1110,9194,896,0.0166,True,0.0135,0.0026,416,1784,0.0032
+Woodworking,370300,370300,740600,2700,8300,1481,6155,664,0.0166,True,0.0112,0.0036,555,2145,0.0058
+Light mfg,449200,898000,1347200,3300,17400,1797,14211,1392,0.0158,True,0.0129,0.0024,674,2626,0.0029

@@ -1,0 +1,10 @@
+stage,scenario,clients,arpu_eur,annual_revenue_eur,basis
+A_wedge,base,500,2415,1207500,500 French clients at short-term (hedging-only) ARPU
+B_france,low,5500,7114,39127000,"1% of ~550,000 suitable French accounts at 60% mature ARPU"
+B_france,base,16500,7114,117381000,"3% of ~550,000 suitable French accounts at 60% mature ARPU"
+B_france,high,27500,7114,195635000,"5% of ~550,000 suitable French accounts at 60% mature ARPU"
+B_france,ceiling_70pct,385000,11856,4564560000,"'70% of France' — theoretical ceiling at mature ARPU, shown for reference only"
+C_sam,conservative,4916,11455,56312780,"0.05% of SAM (9,830,000 clients) — source SOM 'conservative' (= EUR 56.3M)"
+C_sam,base,14748,11455,168938340,"0.15% of SAM (9,830,000 clients) — source SOM 'base' (= EUR 168.9M)"
+C_sam,upside,49160,11455,563127800,"0.50% of SAM (9,830,000 clients) — source SOM 'upside' (= EUR 562.9M)"
+D_tam,ceiling,14280000,11856,169303680000,Full formal suitable SME TAM at mature ARPU (= EUR 169.3B)
