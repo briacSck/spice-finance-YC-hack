@@ -31,6 +31,8 @@ pnpm-debug.log*
 # --- OS / editor ---
 .DS_Store
 Thumbs.db
+~$*.xlsx
+~$*.docx
 .idea/
 .vscode/
 *.swp

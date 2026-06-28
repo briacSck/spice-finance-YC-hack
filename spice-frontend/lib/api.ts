@@ -1,4 +1,4 @@
-import type { Company, RunEvent } from "./types";
+import type { Company, HedgeLadder, HedgeProposal, ProgramState, RunEvent } from "./types";
 import { MAISON_LEVAIN } from "./mockData";
 
 // The frontend talks ONLY to the orchestrator (eng-review D2).
@@ -48,4 +48,58 @@ export function subscribeToRun(
   };
   src.onerror = (err) => onError?.(err);
   return () => src.close();
+}
+
+// --- hedge program: real recommendations -> approval -> rolling ladder ---
+// This flow always talks to the real orchestrator (never mocked, per spec).
+
+/** POST /api/program -> { program_id } */
+export async function createProgram(): Promise<string> {
+  const res = await fetch(`${ORCHESTRATOR_BASE}/api/program`, { method: "POST" });
+  if (!res.ok) throw new Error(`createProgram ${res.status}`);
+  const data = await res.json();
+  return data.program_id as string;
+}
+
+/** GET /api/program/{id}/proposals */
+export async function getProposals(programId: string): Promise<HedgeProposal[]> {
+  const res = await fetch(`${ORCHESTRATOR_BASE}/api/program/${programId}/proposals`);
+  if (!res.ok) throw new Error(`getProposals ${res.status}`);
+  const data = await res.json();
+  return data.proposals as HedgeProposal[];
+}
+
+/** POST /api/program/{id}/proposals/{ticker}/approve -> the built 12-rung ladder */
+export async function approveProposal(programId: string, ticker: string): Promise<HedgeLadder> {
+  const res = await fetch(`${ORCHESTRATOR_BASE}/api/program/${programId}/proposals/${ticker}/approve`, {
+    method: "POST",
+  });
+  if (!res.ok) throw new Error(`approveProposal ${res.status}`);
+  return res.json();
+}
+
+/** POST /api/program/{id}/proposals/{ticker}/reject */
+export async function rejectProposal(programId: string, ticker: string): Promise<void> {
+  const res = await fetch(`${ORCHESTRATOR_BASE}/api/program/${programId}/proposals/${ticker}/reject`, {
+    method: "POST",
+  });
+  if (!res.ok) throw new Error(`rejectProposal ${res.status}`);
+}
+
+/** POST /api/program/{id}/advance-month — the operator-fired monthly clock tick */
+export async function advanceMonth(
+  programId: string
+): Promise<{ month_index: number; rungs_bought: unknown[]; sweep: unknown }> {
+  const res = await fetch(`${ORCHESTRATOR_BASE}/api/program/${programId}/advance-month`, {
+    method: "POST",
+  });
+  if (!res.ok) throw new Error(`advanceMonth ${res.status}`);
+  return res.json();
+}
+
+/** GET /api/program/{id}/state */
+export async function getProgramState(programId: string): Promise<ProgramState> {
+  const res = await fetch(`${ORCHESTRATOR_BASE}/api/program/${programId}/state`);
+  if (!res.ok) throw new Error(`getProgramState ${res.status}`);
+  return res.json();
 }

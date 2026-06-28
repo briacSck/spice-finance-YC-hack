@@ -29,9 +29,10 @@ from pathlib import Path
 from . import commodities, quant
 from .schema import Company, CostLine
 
-_REPO_ROOT = Path(__file__).resolve().parents[2]
-if str(_REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(_REPO_ROOT))
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+_DATA_GEN_ROOT = _REPO_ROOT / "data-generation"
+if str(_DATA_GEN_ROOT) not in sys.path:
+    sys.path.insert(0, str(_DATA_GEN_ROOT))
 
 # Scoring calibration: score = 50% cost share + 50% normalized historical cost volatility.
 COST_SHARE_FULL = 0.30      # 30% of cost base -> full cost-share points
@@ -105,6 +106,7 @@ class Exposure:
     expense_share: float
     revenue_share: float
     mapping_confidence: float
+    average_monthly_spend: float    # mean monthly spend on this ticker, EUR
     monthly_volatility: float       # coefficient of variation of monthly spend
     price_volatility: float         # annualised commodity price vol (INSEE if available, else registry)
     price_vol_source: str           # "INSEE BDM <code>" or registry fallback reason
@@ -374,6 +376,7 @@ def analyze(rows: list[Row]) -> Report:
                 expense_share=round(spend / total_expense, 4) if total_expense else 0.0,
                 revenue_share=round(spend / total_revenue, 4) if total_revenue else 0.0,
                 mapping_confidence=round(by_ticker_conf.get(t, 0.0), 2),
+                average_monthly_spend=round(mean, 2),
                 monthly_volatility=round(monthly_vol, 4),
                 price_volatility=round(price_vol, 4),
                 price_vol_source=price_vol_source,
@@ -508,7 +511,7 @@ def _safe_error(exc: Exception) -> str:
 
 def load_local_env() -> None:
     """Load local ignored env files without overriding existing variables."""
-    roots = [Path.cwd(), Path.cwd().parent, Path(__file__).resolve().parents[2]]
+    roots = [Path.cwd(), Path.cwd().parent, Path(__file__).resolve().parents[3]]
     for root in roots:
         for name in [".env.local", ".env"]:
             path = root / name

@@ -18,13 +18,13 @@ from __future__ import annotations
 import asyncio
 import json
 import uuid
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
-from . import agent, scenario
+from . import agent, hedging, scenario
 from .company_view import company_view
 
 STEP_DELAY = 0.9       # seconds between streamed events (demo pacing)
@@ -44,6 +44,7 @@ class Run:
 
 
 RUNS: dict[str, Run] = {}
+PROGRAMS: dict[str, hedging.Program] = {}
 
 
 async def _emit(run: Run, events: list[dict]) -> None:
@@ -131,3 +132,73 @@ async def api_trigger(run_id: str) -> dict:
     if run:
         run.trigger.set()
     return {"ok": run is not None}
+
+
+# --- hedge program: real recommendations -> approval -> rolling ladder -------
+def _get_program(program_id: str) -> hedging.Program:
+    program = PROGRAMS.get(program_id)
+    if program is None:
+        raise HTTPException(status_code=404, detail="unknown program")
+    return program
+
+
+def _program_state(program: hedging.Program) -> dict:
+    return {
+        "program_id": program.program_id,
+        "company_name": program.company_name,
+        "current_month_index": program.current_month_index,
+        "proposals": [asdict(p) for p in program.proposals.values()],
+        "ladders": {t: asdict(l) for t, l in program.ladders.items()},
+        "monthly_excess_cash": program.monthly_excess_cash,
+        "sweep_log": program.sweep_log,
+    }
+
+
+@app.post("/api/program")
+async def api_create_program() -> dict:
+    program = hedging.create_program()
+    PROGRAMS[program.program_id] = program
+    return {"program_id": program.program_id}
+
+
+@app.get("/api/program/{program_id}/proposals")
+async def api_program_proposals(program_id: str) -> dict:
+    program = _get_program(program_id)
+    return {"proposals": [asdict(p) for p in program.proposals.values()]}
+
+
+@app.post("/api/program/{program_id}/proposals/{ticker}/approve")
+async def api_program_approve(program_id: str, ticker: str) -> dict:
+    program = _get_program(program_id)
+    proposal = program.proposals.get(ticker)
+    if proposal is None:
+        raise HTTPException(status_code=404, detail="unknown ticker")
+    if proposal.status != "pending":
+        raise HTTPException(status_code=400, detail=f"proposal already {proposal.status}")
+    proposal.status = "approved"
+    ladder = await hedging.build_ladder(program, ticker)
+    return asdict(ladder)
+
+
+@app.post("/api/program/{program_id}/proposals/{ticker}/reject")
+async def api_program_reject(program_id: str, ticker: str) -> dict:
+    program = _get_program(program_id)
+    proposal = program.proposals.get(ticker)
+    if proposal is None:
+        raise HTTPException(status_code=404, detail="unknown ticker")
+    if proposal.status != "pending":
+        raise HTTPException(status_code=400, detail=f"proposal already {proposal.status}")
+    proposal.status = "rejected"
+    return {"ok": True}
+
+
+@app.post("/api/program/{program_id}/advance-month")
+async def api_program_advance_month(program_id: str) -> dict:
+    program = _get_program(program_id)
+    return await hedging.advance_month(program)
+
+
+@app.get("/api/program/{program_id}/state")
+async def api_program_state(program_id: str) -> dict:
+    program = _get_program(program_id)
+    return _program_state(program)

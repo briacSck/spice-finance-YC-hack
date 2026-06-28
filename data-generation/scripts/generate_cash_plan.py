@@ -7,9 +7,10 @@ from pathlib import Path
 import sys
 
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
-if str(REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(REPO_ROOT))
+DATA_GEN_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = DATA_GEN_ROOT.parent
+if str(DATA_GEN_ROOT) not in sys.path:
+    sys.path.insert(0, str(DATA_GEN_ROOT))
 
 from cashplan.business_profiles import infer_business_profile, slugify
 from cashplan.data_sources import CommodityDataProvider, fetch_insee_sdmx_url
