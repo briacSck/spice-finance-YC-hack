@@ -4,7 +4,7 @@ import { COST_SHARES } from "@/lib/mockData";
 
 const STATUS_ROWS = [
   { dot: "bg-green", t: "Books ingested", s: "cost ledger · cash position", time: "done" },
-  { dot: "bg-green", t: "Exposure mapped", s: "invoices → commodities", time: "done" },
+  { dot: "bg-green", t: "Exposure mapped", s: "bank statement → commodities", time: "done" },
   { dot: "bg-terra", t: "Forecast + VaR", s: "ready to run", time: "queued" },
   { dot: "bg-faint", t: "Hedge execution", s: "3 venues standing by", time: "idle" },
 ];
@@ -73,7 +73,7 @@ export function Dashboard({ onRun }: { onRun: () => void }) {
             </div>
           ))}
           <div className="mt-auto flex items-center justify-between pt-6 text-[12.5px] text-dim">
-            <span>3 tradeable commodities found inside ordinary invoices</span>
+            <span>3 tradeable commodities found inside an ordinary bank statement</span>
             <span className="font-medium text-terra">0% hedged</span>
           </div>
         </div>

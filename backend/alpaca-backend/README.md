@@ -5,7 +5,7 @@ Python backend for the YIELD AI-CFO **commodity-hedging** agent. Wraps the IBKR
 intents over FastAPI. **US-only, paper trading.**
 
 ## What it does
-- Maps an SMB's invoice / AP line-items → the commodity it's silently exposed to
+- Maps an SMB's bank statement / AP line-items → the commodity it's silently exposed to
   (`/infer`, the demo's "unfair depth").
 - Resolves the right futures / futures-option `conid` via `secdef` and places the
   hedge, auto-handling IBKR's reply-confirm prompts.

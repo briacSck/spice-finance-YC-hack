@@ -31,7 +31,7 @@ app = FastAPI(title="YIELD Alpaca backend", version="0.1.0", lifespan=lifespan)
 
 
 class InferRequest(BaseModel):
-    line_items: list[str] = Field(..., description="invoice / AP line-item texts")
+    line_items: list[str] = Field(..., description="bank statement / AP line-item texts")
 
 
 class OptionHedge(BaseModel):
