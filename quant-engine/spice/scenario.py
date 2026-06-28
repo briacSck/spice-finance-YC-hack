@@ -12,9 +12,10 @@ from __future__ import annotations
 BUSINESS = "Maison Levain"
 HERO_DATASET = "maison_levain.json"
 
-# Scripted shock — NOT live market data.
+# Scripted shock — NOT live market data. Root cause: a 2026 heatwave/drought that
+# spikes wheat + energy prices AND collapses footfall / breaks refrigeration.
 SHOCK = {"WEAT": 0.38, "UNG": 0.25, "XLU": 0.25}
-SHOCK_LABEL = "+38% wheat · +25% gas · next quarter"
+SHOCK_LABEL = "2026 heatwave · +38% wheat · +25% gas"
 
 # Hero exposures, grouped for the UI (gas+power -> Energy); matches the frontend.
 HERO_EXPOSURES = [
@@ -62,15 +63,15 @@ def mock_pre() -> list[dict]:
         {"type": "execution", "venue": "alpaca", "action": "Buy WEAT + UNG calls",
          "status": "accepted", "ref": "id 6f2a…b1", "amount": 3900},
         {"type": "tool_call", "who": "Hedging agent", "tool": "take_escrow_policy",
-         "input": {"trigger": "energy_index", "premium": 1240, "payout": 84000}},
-        {"type": "execution", "venue": "escrow", "action": "Parametric energy policy minted",
+         "input": {"trigger": "heat_index", "premium": 1240, "payout": 84000}},
+        {"type": "execution", "venue": "escrow", "action": "Parametric heatwave policy minted",
          "status": "accepted", "ref": "0x9c…4e", "explorer_url": "#", "amount": 1240},
         {"type": "tool_call", "who": "Placement agent", "tool": "lend_morpho",
          "input": {"amount": 180000}},
         {"type": "execution", "venue": "morpho", "action": "Supply idle cash to vault",
          "status": "settled", "ref": "0x21…af", "explorer_url": "#", "amount": 180000},
         {"type": "agent_message", "who": "Orchestrator",
-         "text": "Hedges placed, premiums self-funded from idle cash. Watching the energy oracle."},
+         "text": "Hedges placed, premiums self-funded from idle cash. Watching the heat-index oracle."},
     ]
 
 
@@ -78,7 +79,7 @@ def mock_post() -> list[dict]:
     """Events streamed after the trigger fires (the payout climax)."""
     return [
         {"type": "agent_message", "who": "Scenario · trigger",
-         "text": "Energy index +27% — crossed. Firing payout + cash recall."},
+         "text": "Heat index hit 41°C — trigger crossed. Firing payout + cash recall."},
         {"type": "execution", "venue": "escrow", "action": "Parametric payout settled to the bakery wallet",
          "status": "settled", "ref": "0x9c…4e", "explorer_url": "#", "amount": 84000, "pnl": 84000},
         {"type": "execution", "venue": "morpho", "action": "Recall idle cash",
