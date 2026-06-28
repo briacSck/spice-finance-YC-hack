@@ -1,11 +1,10 @@
 "use client";
 
-export type Tab = "dashboard" | "analyse" | "approvals" | "execution";
+export type Tab = "dashboard" | "approve" | "execution";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "dashboard", label: "Dashboard" },
-  { id: "analyse", label: "Analyse" },
-  { id: "approvals", label: "Approvals" },
+  { id: "approve", label: "Analyse & approve" },
   { id: "execution", label: "Execution" },
 ];
 

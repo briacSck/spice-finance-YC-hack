@@ -2,15 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { TopBar, type Tab } from "@/components/TopBar";
+import { Landing } from "@/components/Landing";
 import { Dashboard } from "@/components/Dashboard";
-import { Analyse } from "@/components/Analyse";
-import { Approvals } from "@/components/Approvals";
+import { Approve } from "@/components/Approve";
 import { Execution } from "@/components/Execution";
+
+// "landing" is the screen-0 entry; it renders standalone (no top nav). Every other
+// view is a Tab in TopBar.
+type View = "landing" | Tab;
 
 const STATUS: Record<Tab, string> = {
   dashboard: "Agent online · Opus 4.8 · ready",
-  analyse: "Analysing · propagate_shock",
-  approvals: "Program · awaiting operator",
+  approve: "Analysing · awaiting approval",
   execution: "Executing · 2 agents · 3 venues",
 };
 
@@ -41,18 +44,16 @@ function useFitScale() {
 }
 
 export default function Page() {
-  const [tab, setTab] = useState<Tab>("dashboard");
+  const [view, setView] = useState<View>("landing");
   // bump on each entry so on-screen motion (count-up, feed type-in) replays
-  const [analyseRun, setAnalyseRun] = useState(0);
+  const [approveRun, setApproveRun] = useState(0);
   const [execRun, setExecRun] = useState(0);
-  // lifted here (not into Approvals) so the hedge program survives tab switches
-  const [programId, setProgramId] = useState<string | null>(null);
   const { scale, ready } = useFitScale();
 
-  function go(next: Tab) {
-    if (next === "analyse") setAnalyseRun((n) => n + 1);
+  function go(next: View) {
+    if (next === "approve") setApproveRun((n) => n + 1);
     if (next === "execution") setExecRun((n) => n + 1);
-    setTab(next);
+    setView(next);
   }
 
   return (
@@ -69,13 +70,18 @@ export default function Page() {
           className="flex flex-col"
           style={{ width: STAGE_W, height: STAGE_H, transform: `scale(${scale})`, transformOrigin: "top left" }}
         >
-          <TopBar active={tab} onTab={go} status={STATUS[tab]} />
-          {tab === "dashboard" && <Dashboard onRun={() => go("analyse")} />}
-          {tab === "analyse" && (
-            <Analyse key={analyseRun} run={analyseRun > 0} onExecute={() => go("execution")} />
+          {view === "landing" ? (
+            <Landing onEnter={() => go("dashboard")} />
+          ) : (
+            <>
+              <TopBar active={view} onTab={go} status={STATUS[view]} />
+              {view === "dashboard" && <Dashboard onRun={() => go("approve")} />}
+              {view === "approve" && (
+                <Approve key={approveRun} run={approveRun > 0} onExecute={() => go("execution")} />
+              )}
+              {view === "execution" && <Execution key={execRun} run={execRun > 0} />}
+            </>
           )}
-          {tab === "approvals" && <Approvals programId={programId} onProgramId={setProgramId} />}
-          {tab === "execution" && <Execution key={execRun} run={execRun > 0} />}
         </div>
       </div>
     </main>
