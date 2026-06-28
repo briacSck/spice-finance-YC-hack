@@ -50,7 +50,7 @@ export function Dashboard({ onRun }: { onRun: () => void }) {
       </div>
 
       {/* lower */}
-      <div className="grid flex-1 grid-cols-[1.6fr_1fr] gap-[30px] pb-14">
+      <div className="grid flex-1 grid-cols-[1.6fr_1fr] gap-[30px] pb-24">
         {/* commodity book */}
         <div className="card flex flex-col px-8 py-7">
           <h2 className="text-[15px] font-semibold tracking-tight">The commodity book inside the bakery</h2>
