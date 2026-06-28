@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import { TopBar, type Tab } from "@/components/TopBar";
 import { Landing } from "@/components/Landing";
 import { Dashboard } from "@/components/Dashboard";
-import { Analyse } from "@/components/Analyse";
-import { Approvals } from "@/components/Approvals";
+import { Approve } from "@/components/Approve";
 import { Execution } from "@/components/Execution";
 
 // "landing" is the screen-0 entry; it renders standalone (no top nav). Every other
@@ -14,8 +13,7 @@ type View = "landing" | Tab;
 
 const STATUS: Record<Tab, string> = {
   dashboard: "Agent online · Opus 4.8 · ready",
-  analyse: "Analysing · propagate_shock",
-  approvals: "Program · awaiting operator",
+  approve: "Analysing · awaiting approval",
   execution: "Executing · 2 agents · 3 venues",
 };
 
@@ -48,14 +46,12 @@ function useFitScale() {
 export default function Page() {
   const [view, setView] = useState<View>("landing");
   // bump on each entry so on-screen motion (count-up, feed type-in) replays
-  const [analyseRun, setAnalyseRun] = useState(0);
+  const [approveRun, setApproveRun] = useState(0);
   const [execRun, setExecRun] = useState(0);
-  // lifted here (not into Approvals) so the hedge program survives tab switches
-  const [programId, setProgramId] = useState<string | null>(null);
   const { scale, ready } = useFitScale();
 
   function go(next: View) {
-    if (next === "analyse") setAnalyseRun((n) => n + 1);
+    if (next === "approve") setApproveRun((n) => n + 1);
     if (next === "execution") setExecRun((n) => n + 1);
     setView(next);
   }
@@ -79,11 +75,10 @@ export default function Page() {
           ) : (
             <>
               <TopBar active={view} onTab={go} status={STATUS[view]} />
-              {view === "dashboard" && <Dashboard onRun={() => go("analyse")} />}
-              {view === "analyse" && (
-                <Analyse key={analyseRun} run={analyseRun > 0} onExecute={() => go("execution")} />
+              {view === "dashboard" && <Dashboard onRun={() => go("approve")} />}
+              {view === "approve" && (
+                <Approve key={approveRun} run={approveRun > 0} onExecute={() => go("execution")} />
               )}
-              {view === "approvals" && <Approvals programId={programId} onProgramId={setProgramId} />}
               {view === "execution" && <Execution key={execRun} run={execRun > 0} />}
             </>
           )}
