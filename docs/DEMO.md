@@ -104,12 +104,20 @@ A continuous ~2-minute story. Real engine output, real testnet/paper execution, 
 3. **The orchestrator proposes a hedge** and reasons through it, then executes across three venues:
    - **Alpaca options (real contract, paper):** resolves a real commodity-ETF option (e.g. UNG/USO) and submits a real paper order; markets are closed this weekend so it queues (real order id, fills Monday). The hedge's P&L is shown from the scenario engine (D1), not a live fill.
    - **Escrow / parametric insurance (testnet):** takes a heatwave policy that pays out automatically if a regional heat index crosses a trigger — protection against an aléa the options can't touch (lost footfall + broken refrigeration are not a tradeable price).
-   - **Aave/Morpho (testnet):** sweeps idle cash into yield to fund the hedge premiums, recallable.
+   - **Morpho (testnet):** sweeps idle cash into yield to fund the hedge premiums, recallable.
 4. **Re-forecast:** the margin distribution tightens, VaR drops. Before/after risk curve, side by side.
 5. **Live beat (on-chain, settles on stage):** trigger the heatwave → the heat index crosses the trigger, the Escrow parametric policy pays out and the Morpho position is recalled, **live on testnet** (24/7, works this weekend) → the scenario engine shows the bakery's margin holding while an unhedged peer's collapses. The AI didn't predict the risk, it *pre-bought protection that just paid out* — and a traditional insurer would still be sending an adjuster. **One 2026 heatwave hit this bakery three ways — spiked input prices (options), stranded idle cash (Morpho yield), and collapsed footfall + broke refrigeration (parametric payout) — and Spice caught all three.**
 6. **The vision close:** "Multiply this by a million ordinary businesses and you don't just have a hedging tool — you have the real-time micro-map of the entire real economy. That's what we sell to hedge funds and central banks."
 
 **Why it beats the room:** real quant + real on-chain execution + the most ordinary imaginable business. Everyone else demos a chat box over a spreadsheet. Spice turns a boulangerie into a hedge fund and shows the macro endgame.
+
+> **Product surface (beyond the scripted story):** the orchestrator also exposes a
+> deterministic **approval flow** (`/api/program/*`, the *Approvals* screen). Real
+> exposure analysis becomes one proposal per commodity plus a parametric **heatwave
+> escrow** proposal. A human approves each once; Spice then mechanically builds a
+> 12-month rolling Alpaca option ladder, mints the escrow policy, and sweeps excess
+> cash into Morpho every month — options + Morpho + escrow all driven by the same
+> engine (`backend/quant-engine/spice/hedging.py`).
 
 ---
 
