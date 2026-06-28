@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="64" viewBox="0 0 320 64" fill="none" role="img" aria-label="Spice — The Exotic Asset Company">
+  <!-- mark -->
+  <rect x="0" y="8" width="48" height="48" rx="13" fill="#1B5E4C"/>
+  <g fill="#FFFFFF" transform="translate(8,16) scale(1)">
+    <path d="M16 5C18.4 10.8 18.4 21.2 16 27C13.6 21.2 13.6 10.8 16 5Z"/>
+    <path d="M5 16C10.8 13.6 21.2 13.6 27 16C21.2 18.4 10.8 18.4 5 16Z"/>
+  </g>
+  <!-- wordmark -->
+  <text x="66" y="34" font-family="Satoshi, system-ui, sans-serif" font-size="26" font-weight="600" letter-spacing="-0.5" fill="#111111">Spice</text>
+  <text x="67" y="50" font-family="Satoshi, system-ui, sans-serif" font-size="10" font-weight="500" letter-spacing="1.4" fill="#9A9A9A">THE EXOTIC ASSET COMPANY</text>
+</svg>

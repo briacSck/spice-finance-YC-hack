@@ -8,7 +8,7 @@ type Venue = (typeof HEDGING_VENUES)[number];
 function VenueRow({ v }: { v: Venue }) {
   const settled = v.status === "settled";
   return (
-    <div className="flex items-center gap-[18px] border-t border-hair2 py-[14px]">
+    <div className="flex items-center gap-[18px] border-t border-hair2 py-[10px]">
       <div className="w-[150px]">
         <div className="text-[14px] font-medium">{v.n}</div>
         <div className="mt-0.5 text-[11.5px] text-faint">{v.s}</div>
@@ -68,15 +68,15 @@ export function Execution({ run }: { run: boolean }) {
   return (
     <>
       {/* CLIMAX banner — deep ink, restrained */}
-      <div className="relative mx-11 mt-2 flex items-center gap-10 rounded-[18px] bg-inkdeep px-[34px] py-[26px] text-[#E8EDE9]">
+      <div className="relative mx-11 mt-2 flex items-center gap-10 rounded-[18px] bg-inkdeep px-[34px] py-[18px] text-[#E8EDE9]">
         <div className="absolute right-7 top-5 flex items-center gap-2 text-[10.5px] font-medium uppercase tracking-label text-[#7FB7A2]">
           <span className="live-dot h-[7px] w-[7px] rounded-full bg-[#46C795]" />
           Live · testnet settled
         </div>
         <div className="max-w-[330px]">
-          <div className="text-[10.5px] font-medium uppercase tracking-label text-[#7FB7A2]">The hedge just paid</div>
+          <div className="text-[10.5px] font-medium uppercase tracking-label text-[#7FB7A2]">The hedge paid out</div>
           <div className="mt-2.5 text-[20px] font-semibold leading-[1.3]">
-            Energy index crossed. Spice&apos;s protection paid out on-chain.
+            Energy crossed the trigger. The policy settled on-chain — no one had to approve it.
           </div>
         </div>
         <div className="ml-auto flex gap-12">
@@ -103,7 +103,7 @@ export function Execution({ run }: { run: boolean }) {
         </div>
       </div>
 
-      <div className="grid min-h-0 flex-1 grid-cols-[420px_1fr] gap-[30px] px-11 pb-9 pt-[26px]">
+      <div className="grid min-h-0 flex-1 grid-cols-[420px_1fr] gap-[30px] px-11 pb-24 pt-[18px]">
         {/* activity feed */}
         <div className="card flex min-h-0 flex-col">
           <div className="flex items-baseline justify-between px-7 pb-[18px] pt-[22px]">
@@ -130,9 +130,9 @@ export function Execution({ run }: { run: boolean }) {
         </div>
 
         {/* agent lanes + result */}
-        <div className="flex min-h-0 flex-col gap-6">
-          <div className="card px-[30px] py-6">
-            <div className="mb-[18px] flex items-center gap-[14px]">
+        <div className="flex min-h-0 flex-col gap-3">
+          <div className="card px-[30px] py-4">
+            <div className="mb-3 flex items-center gap-[14px]">
               <div className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-green text-[13px] font-semibold text-paper">H</div>
               <div className="text-[15.5px] font-semibold">
                 Hedging agent
@@ -147,8 +147,8 @@ export function Execution({ run }: { run: boolean }) {
             ))}
           </div>
 
-          <div className="card px-[30px] py-6">
-            <div className="mb-[18px] flex items-center gap-[14px]">
+          <div className="card px-[30px] py-4">
+            <div className="mb-3 flex items-center gap-[14px]">
               <div className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-[#5C7A6E] text-[13px] font-semibold text-paper">P</div>
               <div className="text-[15.5px] font-semibold">
                 Placement agent
@@ -163,12 +163,12 @@ export function Execution({ run }: { run: boolean }) {
             ))}
           </div>
 
-          <div className="card flex flex-1 flex-col justify-center px-[30px] py-6">
+          <div className="card flex flex-1 flex-col justify-center px-[30px] py-4">
             <div className="label">The result</div>
-            <div className="mt-3 max-w-[600px] text-[18px] font-medium leading-[1.5] text-ink">
-              The AI didn&apos;t predict the spike — it{" "}
-              <b className="font-semibold">pre-bought protection that just paid out.</b> Maison Levain&apos;s margin holds at{" "}
-              <span className="text-green">11%</span> while an unhedged peer drops to{" "}
+            <div className="mt-2.5 max-w-[600px] text-[16px] font-medium leading-snug text-ink">
+              The hedge was in place weeks before the spike. When energy crossed the trigger it{" "}
+              <b className="font-semibold">paid out €84k on its own</b> — Maison Levain kept its{" "}
+              <span className="text-green">11%</span> margin while an unhedged bakery fell to{" "}
               <span className="text-terra">3.3%</span>.
             </div>
           </div>
